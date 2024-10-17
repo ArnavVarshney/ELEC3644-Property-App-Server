@@ -1,0 +1,19 @@
+name: ELEC3644 Server Deployment
+
+on: [ push, pull_request ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Push to remote repository - production
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_SSH }}
+          script: |
+            cd /home/ubuntu/ELEC3644-Property-App-Server
+            git pull
+            npm i
