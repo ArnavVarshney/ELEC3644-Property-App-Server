@@ -1,4 +1,4 @@
-import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
+import {Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Group} from "./Group";
 import {Message} from "./Message";
 
@@ -15,12 +15,6 @@ export class User {
 
     @Column()
     lastName: string = "";
-
-    @OneToMany(() => Message, message => message.sender)
-    sentMessages: Message[] | undefined;
-
-    @OneToMany(() => Message, message => message.receiver)
-    receivedMessages: Message[] | undefined;
 
     @ManyToMany(() => Group, group => group.users)
     @JoinTable()

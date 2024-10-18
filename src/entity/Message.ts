@@ -6,10 +6,10 @@ export class Message {
     @PrimaryGeneratedColumn("uuid")
     id: string | undefined;
 
-    @ManyToOne(() => User, user => user.sentMessages)
+    @ManyToOne(() => User)
     sender: User | undefined;
 
-    @ManyToOne(() => User, user => user.receivedMessages)
+    @ManyToOne(() => User)
     receiver: User | undefined;
 
     @Column()
