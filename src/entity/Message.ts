@@ -1,19 +1,20 @@
-import {Column, Entity, PrimaryColumn} from "typeorm";
+import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import {User} from "./User";
 
 @Entity()
 export class Message {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn("uuid")
     id: string = "";
 
-    @Column()
-    sender_id: string = "";
+    @ManyToOne(() => User, user => user.sentMessages)
+    sender: User | undefined;
 
-    @Column()
-    receiver_id: string = "";
+    @ManyToOne(() => User, user => user.receivedMessages)
+    receiver: User | undefined;
 
     @Column()
     content: string = "";
 
-    @Column({type: "datetime", default: () => "CURRENT_TIMESTAMP"})
-    timestamp: string = "";
+    @CreateDateColumn()
+    timestamp: Date = new Date();
 }

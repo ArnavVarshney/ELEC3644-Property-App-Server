@@ -2,42 +2,47 @@ import "reflect-metadata";
 import {User} from "./entity/User";
 import {Message} from "./entity/Message";
 import {DataSource} from "typeorm";
+import {Group} from "./entity/Group";
 
 export const AppDataSource = new DataSource({
     type: "sqlite",
     database: "./chat.db",
     synchronize: true,
-    logging: false,
-    entities: [User, Message],
+    logging: true,
+    entities: [User, Message, Group],
 });
 
 export async function initDatabase() {
     await AppDataSource.initialize();
 }
 
-export async function saveUser(userId: string, name: string) {
+export async function saveUser(userId: string, firstName: string, lastName: string) {
     const user = new User();
     user.id = userId;
-    user.name = name;
+    user.firstName = firstName;
+    user.lastName = lastName;
     await AppDataSource.manager.save(user);
 }
 
 export async function saveMessage(messageId: string, senderId: string, receiverId: string, content: string) {
     const message = new Message();
     message.id = messageId;
-    message.sender_id = senderId;
-    message.receiver_id = receiverId;
+    const sender = await AppDataSource.manager.findOne(User, {where: {id: senderId}});
+    if (sender)
+        message.sender = sender;
+    const receiver = await AppDataSource.manager.findOne(User, {where: {id: receiverId}});
+    if (receiver)
+        message.receiver = receiver;
     message.content = content;
     await AppDataSource.manager.save(message);
 }
 
-export async function getMessages(userId: string, otherId: string) {
+export async function getMessages(userId: string) {
     const messageRepository = AppDataSource.getRepository(Message);
-    return await messageRepository.find({
+    return messageRepository.find({
         where: [
-            {sender_id: userId, receiver_id: otherId},
-            {sender_id: otherId, receiver_id: userId}
-        ],
-        order: {timestamp: "ASC"}
+            {sender: {id: userId}},
+            {receiver: {id: userId}}
+        ]
     });
 }

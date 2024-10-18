@@ -1,13 +1,15 @@
 import WebSocket from "ws";
 import {v4 as uuidv4} from "uuid";
 import {getMessages, saveMessage, saveUser} from "./database";
-import {User} from "./interfaces";
+import {User} from "./entity/User";
 
 const clients = new Map<WebSocket, User>();
 
 export function handleWS(ws: WebSocket) {
     const userId = uuidv4();
-    clients.set(ws, {id: userId, name: null});
+    const user = new User();
+    user.id = userId;
+    clients.set(ws, user);
 
     ws.on("message", async (message: string) => {
         const data = JSON.parse(message);
@@ -16,13 +18,14 @@ export function handleWS(ws: WebSocket) {
             case "setName":
                 const user = clients.get(ws);
                 if (user) {
-                    user.name = data.name;
-                    await saveUser(userId, data.name);
+                    user.firstName = data.firstName;
+                    user.lastName = data.lastName;
+                    await saveUser(userId, data.firstName, data.lastName);
                 }
                 break;
             case "sendMessage":
                 const sender = clients.get(ws);
-                if (sender?.name && data.receiverId) {
+                if (sender?.firstName && data.receiverId) {
                     const messageId = uuidv4();
                     const timestamp = new Date().toISOString();
                     console.log(messageId, timestamp);
@@ -34,7 +37,8 @@ export function handleWS(ws: WebSocket) {
                                     type: 'newMessage',
                                     id: messageId,
                                     senderId: sender.id,
-                                    senderName: sender.name,
+                                    firstName: sender.firstName,
+                                    lastName: sender.lastName,
                                     content: data.content,
                                     timestamp: timestamp
                                 });
@@ -56,7 +60,7 @@ export function handleWS(ws: WebSocket) {
                 break;
             case "fetchMessages":
                 try {
-                    const messages = await getMessages(userId, data.otherId);
+                    const messages = await getMessages(userId);
                     ws.send(JSON.stringify({
                         type: "messageHistory",
                         messages: messages

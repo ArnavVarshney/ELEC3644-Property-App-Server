@@ -1,10 +1,25 @@
-import {Column, Entity, PrimaryColumn} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
+import {Group} from "./Group";
+import {Message} from "./Message";
 
 @Entity()
 export class User {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn("uuid")
     id: string = "";
 
-    @Column({nullable: true})
-    name: string  = "";
+    @Column()
+    firstName: string = "";
+
+    @Column()
+    lastName: string = "";
+
+    @OneToMany(() => Message, message => message.sender)
+    sentMessages: Message[] | undefined;
+
+    @OneToMany(() => Message, message => message.receiver)
+    receivedMessages: Message[] | undefined;
+
+    @ManyToMany(() => Group, group => group.users)
+    @JoinTable()
+    groups: Group[] | undefined;
 }
