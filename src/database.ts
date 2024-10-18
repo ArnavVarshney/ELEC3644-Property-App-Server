@@ -16,25 +16,31 @@ export async function initDatabase() {
     await AppDataSource.initialize();
 }
 
-export async function saveUser(userId: string, firstName: string, lastName: string) {
+export async function createUpdateUser(firstName: string, lastName: string, id?: string) {
     const user = new User();
-    user.id = userId;
+    if (id)
+        user.id = id;
     user.firstName = firstName;
     user.lastName = lastName;
     await AppDataSource.manager.save(user);
+    return user;
 }
 
-export async function saveMessage(messageId: string, senderId: string, receiverId: string, content: string) {
+export async function getUser(userId: string) {
+    return AppDataSource.manager.findOne(User, {where: {id: userId}});
+}
+
+export async function saveMessage(senderId: string, receiverId: string, content: string) {
     const message = new Message();
-    message.id = messageId;
     const sender = await AppDataSource.manager.findOne(User, {where: {id: senderId}});
-    if (sender)
-        message.sender = sender;
     const receiver = await AppDataSource.manager.findOne(User, {where: {id: receiverId}});
-    if (receiver)
+    if (sender && receiver) {
+        message.sender = sender;
         message.receiver = receiver;
-    message.content = content;
-    await AppDataSource.manager.save(message);
+        message.content = content;
+        await AppDataSource.manager.save(message);
+        return message;
+    }
 }
 
 export async function getMessages(userId: string) {
