@@ -4,7 +4,7 @@ import {User} from "./User";
 @Entity()
 export class Message {
     @PrimaryGeneratedColumn("uuid")
-    id: string = "";
+    id: string | undefined;
 
     @ManyToOne(() => User, user => user.sentMessages)
     sender: User | undefined;

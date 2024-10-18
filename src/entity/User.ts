@@ -5,7 +5,10 @@ import {Message} from "./Message";
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    id: string = "";
+    id: string | undefined;
+
+    @CreateDateColumn()
+    createdAt: Date = new Date();
 
     @Column()
     firstName: string = "";

@@ -4,7 +4,10 @@ import {User} from "./User";
 @Entity()
 export class Group {
     @PrimaryGeneratedColumn("uuid")
-    id: string = "";
+    id: string | undefined;
+
+    @CreateDateColumn()
+    createdAt: Date = new Date();
 
     @Column()
     name: string = "";
