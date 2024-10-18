@@ -17,3 +17,4 @@ jobs:
             cd /home/ubuntu/ELEC3644-Property-App-Server
             git pull
             npm i
+            npm build
