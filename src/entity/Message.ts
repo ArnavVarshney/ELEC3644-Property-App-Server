@@ -1,20 +1,26 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { User } from "./User";
 
 @Entity()
 export class Message {
-    @PrimaryGeneratedColumn("uuid")
-    id: string | undefined;
+  @PrimaryGeneratedColumn("uuid")
+  id: string | undefined;
 
-    @ManyToOne(() => User)
-    sender: User | undefined;
+  @ManyToOne(() => User)
+  sender: User | undefined;
 
-    @ManyToOne(() => User)
-    receiver: User | undefined;
+  @ManyToOne(() => User)
+  receiver: User | undefined;
 
-    @Column()
-    content: string = "";
+  @Column()
+  content: string = "";
 
-    @CreateDateColumn()
-    timestamp: Date = new Date();
+  @CreateDateColumn()
+  timestamp: Date = new Date();
 }
