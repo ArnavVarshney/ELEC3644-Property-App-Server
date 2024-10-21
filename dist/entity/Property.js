@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Property = void 0;
 const typeorm_1 = require("typeorm");
-const TransactionHistory_1 = require("./TransactionHistory");
 const Review_1 = require("./Review");
 let Property = class Property {
 };
@@ -41,11 +40,11 @@ __decorate([
     __metadata("design:type", String)
 ], Property.prototype, "subDistrict", void 0);
 __decorate([
-    (0, typeorm_1.Column)("simple-json"),
+    (0, typeorm_1.Column)("simple-json", { nullable: true }),
     __metadata("design:type", Array)
 ], Property.prototype, "facilities", void 0);
 __decorate([
-    (0, typeorm_1.Column)("simple-json"),
+    (0, typeorm_1.Column)("simple-json", { nullable: true }),
     __metadata("design:type", Object)
 ], Property.prototype, "schoolNet", void 0);
 __decorate([
@@ -85,9 +84,7 @@ __decorate([
     __metadata("design:type", Array)
 ], Property.prototype, "imageUrls", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => TransactionHistory_1.TransactionHistory, (transaction) => transaction.id, {
-        cascade: true,
-    }),
+    (0, typeorm_1.Column)("simple-json", { nullable: true }),
     __metadata("design:type", Array)
 ], Property.prototype, "transactionHistory", void 0);
 __decorate([

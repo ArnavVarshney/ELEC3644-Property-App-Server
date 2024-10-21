@@ -20,7 +20,7 @@ const database_1 = require("../database");
 const express_1 = __importDefault(require("express"));
 const Property_1 = require("../entity/Property");
 const propertyRouter = express_1.default.Router({ strict: true });
-function createProperty(name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls) {
+function createProperty(name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, transactionHistory) {
     return __awaiter(this, void 0, void 0, function* () {
         const property = new Property_1.Property();
         property.name = name;
@@ -39,11 +39,12 @@ function createProperty(name, address, area, district, subDistrict, facilities, 
         property.buildingDirection = buildingDirection;
         property.estate = estate;
         property.imageUrls = imageUrls !== null && imageUrls !== void 0 ? imageUrls : [];
+        property.transactionHistory = transactionHistory !== null && transactionHistory !== void 0 ? transactionHistory : [];
         yield database_1.AppDataSource.manager.save(property);
         return property;
     });
 }
-function updateProperty(propertyId, name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls) {
+function updateProperty(propertyId, name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, transactionHistory) {
     return __awaiter(this, void 0, void 0, function* () {
         const property = yield database_1.AppDataSource.manager.findOne(Property_1.Property, {
             where: { id: propertyId },
@@ -68,6 +69,8 @@ function updateProperty(propertyId, name, address, area, district, subDistrict, 
                 buildingDirection !== null && buildingDirection !== void 0 ? buildingDirection : property.buildingDirection;
             property.estate = estate !== null && estate !== void 0 ? estate : property.estate;
             property.imageUrls = imageUrls !== null && imageUrls !== void 0 ? imageUrls : property.imageUrls;
+            property.transactionHistory =
+                transactionHistory !== null && transactionHistory !== void 0 ? transactionHistory : property.transactionHistory;
             yield database_1.AppDataSource.manager.save(property);
             return property;
         }
@@ -95,14 +98,12 @@ propertyRouter.get("/:propertyId", (req, res) => __awaiter(void 0, void 0, void 
         res.status(404).send("Property not found");
 }));
 propertyRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, } = req.body;
+    const { name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, transactionHistory, } = req.body;
     if (!name ||
         !address ||
         !area ||
         !district ||
         !subDistrict ||
-        !facilities ||
-        !schoolNet ||
         !saleableArea ||
         !saleableAreaPricePerSquareFoot ||
         !grossFloorArea ||
@@ -114,7 +115,16 @@ propertyRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(400).send("All fields are required");
         return;
     }
-    const property = yield createProperty(name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls);
+    const property = yield createProperty(name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, transactionHistory);
     res.json(property);
+}));
+propertyRouter.patch("/:propertyId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const propertyId = req.params.propertyId;
+    const { name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, transactionHistory, } = req.body;
+    const property = yield updateProperty(propertyId, name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, transactionHistory);
+    if (property)
+        res.json(property);
+    else
+        res.status(404).send("Property not found");
 }));
 exports.default = propertyRouter;
