@@ -11,6 +11,7 @@ import userRouter from "./routes/userRoutes";
 dotenv.config();
 
 const app = express();
+app.use(express.json());
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
