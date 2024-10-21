@@ -4,13 +4,24 @@ import { Message } from "./entity/Message";
 import { Group } from "./entity/Group";
 import { Review } from "./entity/Review";
 import { DataSource } from "typeorm";
+import { Property } from "./entity/Property";
+import { TransactionHistory } from "./entity/TransactionHistory";
+import { Facility } from "./entity/Facility";
 
 export const AppDataSource = new DataSource({
   type: "sqlite",
   database: "./chat.db",
   synchronize: true,
   logging: true,
-  entities: [User, Message, Group, Review],
+  entities: [
+    User,
+    Message,
+    Group,
+    Review,
+    Property,
+    TransactionHistory,
+    Facility,
+  ],
 });
 
 export async function initDatabase() {
@@ -52,6 +63,10 @@ export async function getUser(userId: string) {
   return AppDataSource.manager.findOne(User, { where: { id: userId } });
 }
 
+export async function getUsers() {
+  return AppDataSource.manager.find(User);
+}
+
 export async function createMessage(
   senderId: string,
   receiverId: string,
@@ -71,6 +86,10 @@ export async function createMessage(
     await AppDataSource.manager.save(message);
     return message;
   }
+}
+
+export async function getMessage(messageId: string) {
+  return AppDataSource.manager.findOne(Message, { where: { id: messageId } });
 }
 
 export async function getMessages(userId: string) {

@@ -7,6 +7,8 @@ import { handleWS } from "./websocket";
 import simpleGit from "simple-git";
 
 import userRouter from "./routes/userRoutes";
+import messageRouter from "./routes/messageRoutes";
+import reviewRouter from "./routes/reviewRoutes";
 
 dotenv.config();
 
@@ -44,6 +46,8 @@ app.get("/", async (req, res) => {
 });
 
 app.use("/users", userRouter);
+app.use("/messages", messageRouter);
+app.use("/reviews", reviewRouter);
 
 server.listen(port, () => {
   console.log(`Server running at port http://localhost:${port}`);
