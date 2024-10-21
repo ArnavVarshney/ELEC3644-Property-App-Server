@@ -59,7 +59,7 @@ export class Property {
   @Column()
   estate: string;
 
-  @Column("simple-array")
+  @Column("simple-array", { nullable: true })
   imageUrls: string[];
 
   @OneToMany(() => TransactionHistory, (transaction) => transaction.id, {
