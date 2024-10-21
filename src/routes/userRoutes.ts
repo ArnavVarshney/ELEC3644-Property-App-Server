@@ -1,4 +1,3 @@
-import * as db from "../database";
 import { AppDataSource } from "../database";
 import express from "express";
 import { User } from "../entity/User";
@@ -11,6 +10,8 @@ export async function createUser(
   password: string,
   avatarUrl?: string,
 ) {
+  if (await AppDataSource.manager.findOne(User, { where: { email: email } }))
+    return;
   const user = new User();
   user.name = name;
   user.email = email;
@@ -62,8 +63,11 @@ userRouter.post("/", async (req, res) => {
     return;
   }
   const user = await createUser(name, email, password, avatarUrl);
-  user.password = "";
-  res.json(user);
+  if (!user) res.status(400).send("User creation failed");
+  else {
+    user.password = "";
+    res.json(user);
+  }
 });
 
 userRouter.patch("/:userId", async (req, res) => {
