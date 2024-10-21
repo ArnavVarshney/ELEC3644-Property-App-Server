@@ -45,6 +45,7 @@ const simple_git_1 = __importDefault(require("simple-git"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const messageRoutes_1 = __importDefault(require("./routes/messageRoutes"));
 const reviewRoutes_1 = __importDefault(require("./routes/reviewRoutes"));
+const propertyRoutes_1 = __importDefault(require("./routes/propertyRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -78,6 +79,8 @@ app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 app.use("/users", userRoutes_1.default);
 app.use("/messages", messageRoutes_1.default);
 app.use("/reviews", reviewRoutes_1.default);
+app.use("properties", propertyRoutes_1.default);
+app.use("/images", express_1.default.static("images"));
 server.listen(port, () => {
     console.log(`Server running at port http://localhost:${port}`);
 });
