@@ -17,19 +17,42 @@ export async function initDatabase() {
   await AppDataSource.initialize();
 }
 
-export async function createUpdateUser(name?: string, id?: string) {
+export async function createUser(
+  name: string,
+  email: string,
+  password: string,
+  avatarUrl?: string,
+) {
   const user = new User();
-  if (id) user.id = id;
   user.name = name;
+  user.email = email;
+  user.password = password;
+  user.avatarUrl = avatarUrl ?? "";
   await AppDataSource.manager.save(user);
   return user;
+}
+
+export async function updateUser(
+  userId: string,
+  name?: string,
+  avatarUrl?: string,
+) {
+  const user = await AppDataSource.manager.findOne(User, {
+    where: { id: userId },
+  });
+  if (user) {
+    user.name = name ?? user.name;
+    user.avatarUrl = avatarUrl ?? user.avatarUrl;
+    await AppDataSource.manager.save(user);
+    return user;
+  }
 }
 
 export async function getUser(userId: string) {
   return AppDataSource.manager.findOne(User, { where: { id: userId } });
 }
 
-export async function saveMessage(
+export async function createMessage(
   senderId: string,
   receiverId: string,
   content: string,

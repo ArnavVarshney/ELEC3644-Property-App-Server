@@ -1,10 +1,5 @@
 import WebSocket from "ws";
-import {
-  createUpdateUser,
-  getMessages,
-  getUser,
-  saveMessage,
-} from "./database";
+import { createMessage, getMessages, getUser } from "./database";
 import { User } from "./entity/User";
 
 const clients = new Map<WebSocket, User>();
@@ -18,20 +13,6 @@ export function handleWS(ws: WebSocket) {
       const userId = clients.get(ws)?.id;
 
       switch (data.type) {
-        case "newUser":
-          if (userId) break;
-          const user = await createUpdateUser(data.name);
-          if (user) {
-            clients.set(ws, user);
-            ws.send(
-              JSON.stringify({
-                type: "userCreated",
-                userId: user.id,
-              }),
-            );
-          }
-          break;
-
         case "setUser":
           if (userId) break;
           if (data.userId) {
@@ -51,7 +32,7 @@ export function handleWS(ws: WebSocket) {
         case "sendMessageToUser":
           if (!userId) break;
           if (data.receiverId && data.content) {
-            const message = await saveMessage(
+            const message = await createMessage(
               userId,
               data.receiverId,
               data.content,
