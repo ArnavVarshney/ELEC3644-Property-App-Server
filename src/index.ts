@@ -2,15 +2,17 @@ import express from "express";
 import * as http from 'http';
 import dotenv from "dotenv";
 import WebSocket from "ws";
-import {initDatabase} from "./database";
-import {handleWS} from "./websocket";
+import { initDatabase } from "./database";
+import { handleWS } from "./websocket";
 import simpleGit from 'simple-git';
+
+import userRouter from "./routes/userRoutes";
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({server});
+const wss = new WebSocket.Server({ server });
 
 initDatabase();
 
@@ -23,7 +25,7 @@ app.get('/', async (req, res) => {
     try {
         const log = await git.log();
         const latestCommit = log.latest;
-        const commitDate = latestCommit?.date ? new Date(latestCommit.date).toLocaleString('en-HK', {timeZone: 'Asia/Hong_Kong'}) : 'Unknown date';
+        const commitDate = latestCommit?.date ? new Date(latestCommit.date).toLocaleString('en-HK', { timeZone: 'Asia/Hong_Kong' }) : 'Unknown date';
         const commitUrl = `https://github.com/ArnavVarshney/ELEC3644-Property-App-Server/commit/${latestCommit?.hash}`;
         res.send(`
             <h1>Latest Commit</h1>
@@ -35,6 +37,8 @@ app.get('/', async (req, res) => {
         res.status(500).send('Error fetching latest commit');
     }
 });
+
+app.use('/users', userRouter);
 
 server.listen(port, () => {
     console.log(`Server running at port http://localhost:${port}`);
