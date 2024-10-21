@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,43 +12,82 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const db = __importStar(require("../database"));
+exports.createUser = createUser;
+exports.updateUser = updateUser;
+exports.getUser = getUser;
+exports.getUsers = getUsers;
+const database_1 = require("../database");
 const express_1 = __importDefault(require("express"));
+const User_1 = require("../entity/User");
 const userRouter = express_1.default.Router({ strict: true });
-userRouter.get('/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userId = req.params.userId;
-    const user = yield db.getUser(userId);
-    if (user) {
-        res.json(user);
-    }
-    else {
-        res.status(404).send('User not found');
-    }
+function createUser(name, email, password, avatarUrl) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (yield database_1.AppDataSource.manager.findOne(User_1.User, { where: { email: email } }))
+            return;
+        const user = new User_1.User();
+        user.name = name;
+        user.email = email;
+        user.password = password;
+        user.avatarUrl = avatarUrl !== null && avatarUrl !== void 0 ? avatarUrl : "";
+        yield database_1.AppDataSource.manager.save(user);
+        return user;
+    });
+}
+function updateUser(userId, name, avatarUrl) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const user = yield database_1.AppDataSource.manager.findOne(User_1.User, {
+            where: { id: userId },
+        });
+        if (user) {
+            user.name = name !== null && name !== void 0 ? name : user.name;
+            user.avatarUrl = avatarUrl !== null && avatarUrl !== void 0 ? avatarUrl : user.avatarUrl;
+            yield database_1.AppDataSource.manager.save(user);
+            return user;
+        }
+    });
+}
+function getUser(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return database_1.AppDataSource.manager.findOne(User_1.User, { where: { id: userId } });
+    });
+}
+function getUsers() {
+    return __awaiter(this, void 0, void 0, function* () {
+        return database_1.AppDataSource.manager.find(User_1.User);
+    });
+}
+userRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.json(yield getUsers());
 }));
-userRouter.post('/create', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name } = req.body;
-    if (!name) {
-        res.status(400).send('Name is required');
+userRouter.get("/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.params.userId;
+    const user = yield getUser(userId);
+    if (user)
+        res.json(user);
+    else
+        res.status(404).send("User not found");
+}));
+userRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, email, password, avatarUrl } = req.body;
+    if (!name || !email || !password) {
+        res.status(400).send("Name, email, and password are required");
         return;
     }
-    const user = yield db.createUpdateUser(name);
-    res.json(user);
-}));
-userRouter.post('/update/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userId = req.params.userId;
-    const user = yield db.getUser(userId);
-    if (user) {
-        const { name } = req.body;
-        if (!name) {
-            res.status(400).send('Name is required');
-            return;
-        }
-        user.name = name;
-        yield db.AppDataSource.manager.save(user);
+    const user = yield createUser(name, email, password, avatarUrl);
+    if (!user)
+        res.status(400).send("User creation failed");
+    else {
+        user.password = "";
         res.json(user);
     }
-    else {
-        res.status(404).send('User not found');
-    }
+}));
+userRouter.patch("/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.params.userId;
+    const { name, avatarUrl } = req.body;
+    const user = yield updateUser(userId, name, avatarUrl);
+    if (user)
+        res.json(user);
+    else
+        res.status(404).send("User not found");
 }));
 exports.default = userRouter;

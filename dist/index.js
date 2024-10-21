@@ -43,6 +43,8 @@ const database_1 = require("./database");
 const websocket_1 = require("./websocket");
 const simple_git_1 = __importDefault(require("simple-git"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const messageRoutes_1 = __importDefault(require("./routes/messageRoutes"));
+const reviewRoutes_1 = __importDefault(require("./routes/reviewRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -51,12 +53,16 @@ const wss = new ws_1.default.Server({ server });
 (0, database_1.initDatabase)();
 wss.on("connection", websocket_1.handleWS);
 const port = process.env.PORT || 6969;
-app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const git = (0, simple_git_1.default)();
     try {
         const log = yield git.log();
         const latestCommit = log.latest;
-        const commitDate = (latestCommit === null || latestCommit === void 0 ? void 0 : latestCommit.date) ? new Date(latestCommit.date).toLocaleString('en-HK', { timeZone: 'Asia/Hong_Kong' }) : 'Unknown date';
+        const commitDate = (latestCommit === null || latestCommit === void 0 ? void 0 : latestCommit.date)
+            ? new Date(latestCommit.date).toLocaleString("en-HK", {
+                timeZone: "Asia/Hong_Kong",
+            })
+            : "Unknown date";
         const commitUrl = `https://github.com/ArnavVarshney/ELEC3644-Property-App-Server/commit/${latestCommit === null || latestCommit === void 0 ? void 0 : latestCommit.hash}`;
         res.send(`
             <h1>Latest Commit</h1>
@@ -66,10 +72,12 @@ app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         `);
     }
     catch (error) {
-        res.status(500).send('Error fetching latest commit');
+        res.status(500).send("Error fetching latest commit");
     }
 }));
-app.use('/users', userRoutes_1.default);
+app.use("/users", userRoutes_1.default);
+app.use("/messages", messageRoutes_1.default);
+app.use("/reviews", reviewRoutes_1.default);
 server.listen(port, () => {
     console.log(`Server running at port http://localhost:${port}`);
 });

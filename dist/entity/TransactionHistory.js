@@ -9,31 +9,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Group = void 0;
+exports.TransactionHistory = void 0;
 const typeorm_1 = require("typeorm");
-const User_1 = require("./User");
-let Group = class Group {
-    constructor() {
-        this.createdAt = new Date();
-    }
+let TransactionHistory = class TransactionHistory {
 };
-exports.Group = Group;
+exports.TransactionHistory = TransactionHistory;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
     __metadata("design:type", String)
-], Group.prototype, "id", void 0);
-__decorate([
-    (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
-], Group.prototype, "createdAt", void 0);
+], TransactionHistory.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Group.prototype, "name", void 0);
+    __metadata("design:type", Date)
+], TransactionHistory.prototype, "date", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => User_1.User, (user) => user.groups),
-    __metadata("design:type", Array)
-], Group.prototype, "users", void 0);
-exports.Group = Group = __decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], TransactionHistory.prototype, "price", void 0);
+exports.TransactionHistory = TransactionHistory = __decorate([
     (0, typeorm_1.Entity)()
-], Group);
+], TransactionHistory);

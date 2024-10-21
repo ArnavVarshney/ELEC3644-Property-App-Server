@@ -10,8 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleWS = handleWS;
-const database_1 = require("./database");
 const User_1 = require("./entity/User");
+const userRoutes_1 = require("./routes/userRoutes");
+const messageRoutes_1 = require("./routes/messageRoutes");
 const clients = new Map();
 function handleWS(ws) {
     clients.set(ws, new User_1.User());
@@ -21,23 +22,11 @@ function handleWS(ws) {
             const data = JSON.parse(message);
             const userId = (_a = clients.get(ws)) === null || _a === void 0 ? void 0 : _a.id;
             switch (data.type) {
-                case "newUser":
-                    if (userId)
-                        break;
-                    const user = yield (0, database_1.createUpdateUser)(data.firstName, data.lastName);
-                    if (user) {
-                        clients.set(ws, user);
-                        ws.send(JSON.stringify({
-                            type: "userCreated",
-                            userId: user.id,
-                        }));
-                    }
-                    break;
                 case "setUser":
                     if (userId)
                         break;
                     if (data.userId) {
-                        const user = yield (0, database_1.getUser)(data.userId);
+                        const user = yield (0, userRoutes_1.getUser)(data.userId);
                         if (user) {
                             clients.set(ws, user);
                             ws.send(JSON.stringify({
@@ -51,17 +40,17 @@ function handleWS(ws) {
                     if (!userId)
                         break;
                     if (data.receiverId && data.content) {
-                        const message = yield (0, database_1.saveMessage)(userId, data.receiverId, data.content);
+                        const message = yield (0, messageRoutes_1.createMessage)(userId, data.receiverId, data.content);
                         if (message) {
                             ws.send(JSON.stringify({
-                                type: 'newMessage',
+                                type: "newMessage",
                                 id: message.id,
                                 receiverId: (_b = message.sender) === null || _b === void 0 ? void 0 : _b.id,
                                 content: message.content,
                                 timestamp: message.timestamp,
                             }));
                             ws.send(JSON.stringify({
-                                type: 'messageSent',
+                                type: "messageSent",
                                 id: message.id,
                                 receiverId: (_c = message.receiver) === null || _c === void 0 ? void 0 : _c.id,
                                 content: message.content,
@@ -73,10 +62,10 @@ function handleWS(ws) {
                 case "getMessages":
                     if (!userId)
                         break;
-                    const messages = yield (0, database_1.getMessages)(userId);
+                    const messages = yield (0, messageRoutes_1.getMessages)(userId);
                     ws.send(JSON.stringify({
                         type: "messageHistory",
-                        messages: messages
+                        messages: messages,
                     }));
             }
         }

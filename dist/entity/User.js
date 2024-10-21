@@ -8,34 +8,63 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const Group_1 = require("./Group");
 const Review_1 = require("./Review");
+const node_crypto_1 = require("node:crypto");
 let User = class User {
     constructor() {
-        this.name = "";
-        this.email = "";
-        this.avatarUrl = "";
+        this.isActive = true;
         this.createdAt = new Date();
+    }
+    emailToLowerCase() {
+        this.email = this.email.toLowerCase();
+    }
+    hashPassword() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.password = (0, node_crypto_1.hash)("sha256", this.password);
+        });
+    }
+    comparePassword(password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.password === (0, node_crypto_1.hash)("sha256", password);
+        });
     }
 };
 exports.User = User;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
-    __metadata("design:type", Object)
+    __metadata("design:type", String)
 ], User.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], User.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ unique: true }),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ select: false }),
+    __metadata("design:type", String)
+], User.prototype, "password", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: true }),
+    __metadata("design:type", Boolean)
+], User.prototype, "isActive", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "avatarUrl", void 0);
 __decorate([
@@ -43,14 +72,26 @@ __decorate([
     __metadata("design:type", Date)
 ], User.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => Group_1.Group, group => group.users),
+    (0, typeorm_1.ManyToMany)(() => Group_1.Group, (group) => group.users),
     (0, typeorm_1.JoinTable)(),
-    __metadata("design:type", Object)
+    __metadata("design:type", Array)
 ], User.prototype, "groups", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => Review_1.Review, review => review.user),
-    __metadata("design:type", Object)
+    (0, typeorm_1.OneToMany)(() => Review_1.Review, (review) => review.reviewedUser),
+    __metadata("design:type", Array)
 ], User.prototype, "reviews", void 0);
+__decorate([
+    (0, typeorm_1.BeforeInsert)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], User.prototype, "emailToLowerCase", null);
+__decorate([
+    (0, typeorm_1.BeforeInsert)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], User.prototype, "hashPassword", null);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

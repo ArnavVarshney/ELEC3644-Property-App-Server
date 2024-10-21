@@ -14,22 +14,21 @@ const typeorm_1 = require("typeorm");
 const User_1 = require("./User");
 let Message = class Message {
     constructor() {
-        this.content = "";
         this.timestamp = new Date();
     }
 };
 exports.Message = Message;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
-    __metadata("design:type", Object)
+    __metadata("design:type", String)
 ], Message.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => User_1.User),
-    __metadata("design:type", Object)
+    __metadata("design:type", User_1.User)
 ], Message.prototype, "sender", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => User_1.User),
-    __metadata("design:type", Object)
+    __metadata("design:type", User_1.User)
 ], Message.prototype, "receiver", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
