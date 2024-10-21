@@ -48,4 +48,30 @@ userRouter.get('/:userId', (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(404).send('User not found');
     }
 }));
+userRouter.post('/create', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name } = req.body;
+    if (!name) {
+        res.status(400).send('Name is required');
+        return;
+    }
+    const user = yield db.createUpdateUser(name);
+    res.json(user);
+}));
+userRouter.post('/update/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.params.userId;
+    const user = yield db.getUser(userId);
+    if (user) {
+        const { name } = req.body;
+        if (!name) {
+            res.status(400).send('Name is required');
+            return;
+        }
+        user.name = name;
+        yield db.AppDataSource.manager.save(user);
+        res.json(user);
+    }
+    else {
+        res.status(404).send('User not found');
+    }
+}));
 exports.default = userRouter;

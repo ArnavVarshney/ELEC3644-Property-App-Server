@@ -45,6 +45,7 @@ const simple_git_1 = __importDefault(require("simple-git"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
+app.use(express_1.default.json());
 const server = http.createServer(app);
 const wss = new ws_1.default.Server({ server });
 (0, database_1.initDatabase)();
