@@ -1,15 +1,53 @@
-import * as db from "../database";
+import { AppDataSource } from "../database";
 import express from "express";
+import { Message } from "../entity/Message";
+import { User } from "../entity/User";
 
 const messageRouter = express.Router({ strict: true });
 
+export async function createMessage(
+  senderId: string,
+  receiverId: string,
+  content: string,
+) {
+  const message = new Message();
+  const sender = await AppDataSource.manager.findOne(User, {
+    where: { id: senderId },
+  });
+  const receiver = await AppDataSource.manager.findOne(User, {
+    where: { id: receiverId },
+  });
+  if (sender && receiver) {
+    message.sender = sender;
+    message.receiver = receiver;
+    message.content = content;
+    await AppDataSource.manager.save(message);
+    return message;
+  }
+}
+
+export async function getMessage(messageId: string) {
+  return AppDataSource.manager.findOne(Message, { where: { id: messageId } });
+}
+
+export async function getMessages(userId: string) {
+  const messageRepository = AppDataSource.getRepository(Message);
+  return messageRepository.find({
+    where: [{ sender: { id: userId } }, { receiver: { id: userId } }],
+  });
+}
+
+export async function getAllMessages() {
+  return AppDataSource.manager.find(Message);
+}
+
 messageRouter.get("/", async (req, res) => {
-  res.json(await db.getAllMessages());
+  res.json(await getAllMessages());
 });
 
 messageRouter.get("/:messageId", async (req, res) => {
   const messageId = req.params.messageId;
-  const message = await db.getMessage(messageId);
+  const message = await getMessage(messageId);
   if (message) res.json(message);
   else res.status(404).send("Message not found");
 });
@@ -20,7 +58,7 @@ messageRouter.post("/", async (req, res) => {
     res.status(400).send("Sender ID, receiver ID, and content are required");
     return;
   }
-  const message = await db.createMessage(senderId, receiverId, content);
+  const message = await createMessage(senderId, receiverId, content);
   res.json(message);
 });
 

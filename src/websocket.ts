@@ -1,6 +1,7 @@
 import WebSocket from "ws";
-import { createMessage, getMessages, getUser } from "./database";
 import { User } from "./entity/User";
+import { getUser } from "./routes/userRoutes";
+import { createMessage, getMessages } from "./routes/messageRoutes";
 
 const clients = new Map<WebSocket, User>();
 

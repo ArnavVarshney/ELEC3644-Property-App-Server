@@ -39,7 +39,7 @@ export class User {
   @JoinTable()
   groups: Group[];
 
-  @OneToMany(() => Review, (review) => review.user)
+  @OneToMany(() => Review, (review) => review.reviewedUser)
   reviews: Review[];
 
   @BeforeInsert()
@@ -49,10 +49,10 @@ export class User {
 
   @BeforeInsert()
   async hashPassword() {
-    this.password = hash(this.password, "sha256");
+    this.password = hash("sha256", this.password);
   }
 
   async comparePassword(password: string) {
-    return this.password === hash(password, "sha256");
+    return this.password === hash("sha256", password);
   }
 }
