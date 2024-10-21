@@ -1,5 +1,4 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { TransactionHistory } from "./TransactionHistory";
 import { Review } from "./Review";
 
 @Entity()
@@ -22,14 +21,14 @@ export class Property {
   @Column()
   subDistrict: string;
 
-  @Column("simple-json")
+  @Column("simple-json", { nullable: true })
   facilities: {
     desc: string;
     measure: number;
     measureUnit: string;
   }[];
 
-  @Column("simple-json")
+  @Column("simple-json", { nullable: true })
   schoolNet: {
     primary: string;
     secondary: string;
@@ -62,10 +61,11 @@ export class Property {
   @Column("simple-array", { nullable: true })
   imageUrls: string[];
 
-  @OneToMany(() => TransactionHistory, (transaction) => transaction.id, {
-    cascade: true,
-  })
-  transactionHistory: TransactionHistory[];
+  @Column("simple-json", { nullable: true })
+  transactionHistory: {
+    date: Date;
+    price: number;
+  }[];
 
   @OneToMany(() => Review, (review) => review.reviewedProperty)
   reviews: Review[];

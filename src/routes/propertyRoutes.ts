@@ -21,6 +21,7 @@ export async function createProperty(
   buildingDirection: string,
   estate: string,
   imageUrls?: string[],
+  transactionHistory?: { date: Date; price: number }[],
 ) {
   const property = new Property();
   property.name = name;
@@ -39,6 +40,7 @@ export async function createProperty(
   property.buildingDirection = buildingDirection;
   property.estate = estate;
   property.imageUrls = imageUrls ?? [];
+  property.transactionHistory = transactionHistory ?? [];
 
   await AppDataSource.manager.save(property);
   return property;
@@ -62,6 +64,7 @@ export async function updateProperty(
   buildingDirection?: string,
   estate?: string,
   imageUrls?: string[],
+  transactionHistory?: { date: Date; price: number }[],
 ) {
   const property = await AppDataSource.manager.findOne(Property, {
     where: { id: propertyId },
@@ -87,6 +90,8 @@ export async function updateProperty(
       buildingDirection ?? property.buildingDirection;
     property.estate = estate ?? property.estate;
     property.imageUrls = imageUrls ?? property.imageUrls;
+    property.transactionHistory =
+      transactionHistory ?? property.transactionHistory;
 
     await AppDataSource.manager.save(property);
     return property;
@@ -130,6 +135,7 @@ propertyRouter.post("/", async (req, res) => {
     buildingDirection,
     estate,
     imageUrls,
+    transactionHistory,
   } = req.body;
   if (
     !name ||
@@ -137,8 +143,6 @@ propertyRouter.post("/", async (req, res) => {
     !area ||
     !district ||
     !subDistrict ||
-    !facilities ||
-    !schoolNet ||
     !saleableArea ||
     !saleableAreaPricePerSquareFoot ||
     !grossFloorArea ||
@@ -168,8 +172,54 @@ propertyRouter.post("/", async (req, res) => {
     buildingDirection,
     estate,
     imageUrls,
+    transactionHistory,
   );
   res.json(property);
+});
+
+propertyRouter.patch("/:propertyId", async (req, res) => {
+  const propertyId = req.params.propertyId;
+  const {
+    name,
+    address,
+    area,
+    district,
+    subDistrict,
+    facilities,
+    schoolNet,
+    saleableArea,
+    saleableAreaPricePerSquareFoot,
+    grossFloorArea,
+    grossFloorAreaPricePerSquareFoot,
+    netPrice,
+    buildingAge,
+    buildingDirection,
+    estate,
+    imageUrls,
+    transactionHistory,
+  } = req.body;
+  const property = await updateProperty(
+    propertyId,
+    name,
+    address,
+    area,
+    district,
+    subDistrict,
+    facilities,
+    schoolNet,
+    saleableArea,
+    saleableAreaPricePerSquareFoot,
+    grossFloorArea,
+    grossFloorAreaPricePerSquareFoot,
+    netPrice,
+    buildingAge,
+    buildingDirection,
+    estate,
+    imageUrls,
+    transactionHistory,
+  );
+  if (property) res.json(property);
+  else res.status(404).send("Property not found");
 });
 
 export default propertyRouter;
