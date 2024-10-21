@@ -17,7 +17,7 @@ export async function initDatabase() {
   await AppDataSource.initialize();
 }
 
-export async function createUpdateUser(name: string, id?: string) {
+export async function createUpdateUser(name?: string, id?: string) {
   const user = new User();
   if (id) user.id = id;
   user.name = name;

@@ -10,16 +10,16 @@ import { User } from "./User";
 @Entity()
 export class Message {
   @PrimaryGeneratedColumn("uuid")
-  id: string | undefined;
+  id: string;
 
   @ManyToOne(() => User)
-  sender: User | undefined;
+  sender: User;
 
   @ManyToOne(() => User)
-  receiver: User | undefined;
+  receiver: User;
 
   @Column()
-  content: string = "";
+  content: string;
 
   @CreateDateColumn()
   timestamp: Date = new Date();

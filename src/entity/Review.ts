@@ -4,17 +4,17 @@ import { User } from "./User";
 @Entity()
 export class Review {
   @PrimaryGeneratedColumn("uuid")
-  id: string | undefined;
+  id: string;
+
+  @ManyToOne(() => User)
+  author: string;
+
+  @Column("decimal", { precision: 2, scale: 1 })
+  rating: number;
 
   @Column()
-  authorId: string = "";
-
-  @Column("float")
-  rating: number = 0;
-
-  @Column()
-  comment: string = "";
+  comment: string;
 
   @ManyToOne(() => User, (user) => user.reviews)
-  user: User | undefined;
+  user: User;
 }

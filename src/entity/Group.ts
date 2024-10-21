@@ -10,14 +10,14 @@ import { User } from "./User";
 @Entity()
 export class Group {
   @PrimaryGeneratedColumn("uuid")
-  id: string | undefined;
+  id: string;
 
   @CreateDateColumn()
   createdAt: Date = new Date();
 
   @Column()
-  name: string = "";
+  name: string;
 
   @ManyToMany(() => User, (user) => user.groups)
-  users: User[] | undefined;
+  users: User[];
 }

@@ -15,29 +15,32 @@ import { hash } from "node:crypto";
 @Entity()
 export class User {
   @PrimaryGeneratedColumn("uuid")
-  id: string | undefined;
+  id: string;
 
   @Column()
-  name: string = "";
+  name: string;
 
   @Column({ unique: true })
-  email: string = "";
+  email: string;
 
   @Column({ select: false })
-  password: string = "";
+  password: string;
 
-  @Column()
-  avatarUrl: string = "";
+  @Column({ default: true })
+  isActive: boolean = true;
+
+  @Column({ nullable: true })
+  avatarUrl: string;
 
   @CreateDateColumn()
   createdAt: Date = new Date();
 
   @ManyToMany(() => Group, (group) => group.users)
   @JoinTable()
-  groups: Group[] | undefined;
+  groups: Group[];
 
   @OneToMany(() => Review, (review) => review.user)
-  reviews: Review[] | undefined;
+  reviews: Review[];
 
   @BeforeInsert()
   emailToLowerCase() {
