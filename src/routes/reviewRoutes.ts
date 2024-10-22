@@ -38,16 +38,25 @@ export async function createReview(
 }
 
 export async function getReview(reviewId: string) {
-  return AppDataSource.manager.findOne(Review, { where: { id: reviewId } });
+  return AppDataSource.manager.findOne(Review, {
+    where: { id: reviewId },
+    relations: ['author', 'reviewedUser', 'reviewedProperty']
+  });
 }
 
 export async function getReviews(userId?: string, propertyId?: string) {
   const reviewRepository = AppDataSource.getRepository(Review);
+  let whereClause = {};
+
+  if (userId) {
+    whereClause = { reviewedUser: { id: userId } };
+  } else if (propertyId) {
+    whereClause = { reviewedProperty: { id: propertyId } };
+  }
+
   return reviewRepository.find({
-    where: [
-      { reviewedUser: { id: userId } },
-      { reviewedProperty: { id: propertyId } },
-    ],
+    where: whereClause,
+    relations: ['author', 'reviewedUser', 'reviewedProperty']
   });
 }
 
