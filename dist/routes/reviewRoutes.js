@@ -21,7 +21,7 @@ const Review_1 = require("../entity/Review");
 const User_1 = require("../entity/User");
 const Property_1 = require("../entity/Property");
 const reviewRouter = express_1.default.Router({ strict: true });
-function createReview(authorId, rating, content, userId, propertyId) {
+function createReview(authorId, rating, content, reviewedUserId, reviewedPropertyId) {
     return __awaiter(this, void 0, void 0, function* () {
         const review = new Review_1.Review();
         const author = yield database_1.AppDataSource.manager.findOne(User_1.User, {
@@ -29,16 +29,17 @@ function createReview(authorId, rating, content, userId, propertyId) {
         });
         if (!author)
             return;
-        if (userId) {
+        if (reviewedUserId) {
             const user = yield database_1.AppDataSource.manager.findOne(User_1.User, {
-                where: { id: userId },
+                where: { id: reviewedUserId },
             });
+            console.log(user);
             if (user)
                 review.reviewedUser = user;
         }
-        else if (propertyId) {
+        else if (reviewedPropertyId) {
             const property = yield database_1.AppDataSource.manager.findOne(Property_1.Property, {
-                where: { id: propertyId },
+                where: { id: reviewedPropertyId },
             });
             if (property)
                 review.reviewedProperty = property;
@@ -78,12 +79,12 @@ reviewRouter.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(404).send("Review not found");
 }));
 reviewRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { authorId, rating, content, userId, propertyId } = req.body;
+    const { authorId, rating, content, reviewedUserId, reviewedPropertyId } = req.body;
     if (!authorId || !rating || !content) {
         res.status(400).send("Author ID, rating, and content are required");
         return;
     }
-    const review = yield createReview(authorId, rating, content, userId, propertyId);
+    const review = yield createReview(authorId, rating, content, reviewedUserId, reviewedPropertyId);
     if (review)
         res.json(review);
     else
