@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import { Group } from "./Group";
 import { Review } from "./Review";
-import { hash } from "node:crypto";
+import { compare, hash } from "bcrypt";
 
 @Entity()
 export class User {
@@ -49,10 +49,10 @@ export class User {
 
   @BeforeInsert()
   async hashPassword() {
-    this.password = hash("sha256", this.password);
+    this.password = await hash(this.password, 10);
   }
 
   async comparePassword(password: string) {
-    return this.password === hash("sha256", password);
+    return compare(password, this.password);
   }
 }
