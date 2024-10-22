@@ -49,7 +49,7 @@ app.get("/", async (req, res) => {
 app.use("/users", userRouter);
 app.use("/messages", messageRouter);
 app.use("/reviews", reviewRouter);
-app.use("properties", propertyRouter);
+app.use("/properties", propertyRouter);
 app.use("/images", express.static("images"));
 
 server.listen(port, () => {
