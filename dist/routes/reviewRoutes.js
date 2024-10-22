@@ -86,6 +86,22 @@ reviewRouter.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
     else
         res.status(404).send("Review not found");
 }));
+reviewRouter.get("/user/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.params.userId;
+    const reviews = yield getReviews(userId);
+    if (reviews)
+        res.json(reviews);
+    else
+        res.status(404).send("Reviews not found");
+}));
+reviewRouter.get("/property/:propertyId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const propertyId = req.params.propertyId;
+    const reviews = yield getReviews(undefined, propertyId);
+    if (reviews)
+        res.json(reviews);
+    else
+        res.status(404).send("Reviews not found");
+}));
 reviewRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { authorId, rating, content, reviewedUserId, reviewedPropertyId } = req.body;
     if (!authorId || !rating || !content) {
