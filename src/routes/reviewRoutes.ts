@@ -71,6 +71,20 @@ reviewRouter.get("/:id", async (req, res) => {
   else res.status(404).send("Review not found");
 });
 
+reviewRouter.get("/user/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  const reviews = await getReviews(userId);
+  if (reviews) res.json(reviews);
+  else res.status(404).send("Reviews not found");
+});
+
+reviewRouter.get("/property/:propertyId", async (req, res) => {
+  const propertyId = req.params.propertyId;
+  const reviews = await getReviews(undefined, propertyId);
+  if (reviews) res.json(reviews);
+  else res.status(404).send("Reviews not found");
+});
+
 reviewRouter.post("/", async (req, res) => {
   const { authorId, rating, content, reviewedUserId, reviewedPropertyId } =
     req.body;
