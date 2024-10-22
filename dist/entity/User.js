@@ -22,7 +22,7 @@ exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const Group_1 = require("./Group");
 const Review_1 = require("./Review");
-const node_crypto_1 = require("node:crypto");
+const bcrypt_1 = require("bcrypt");
 let User = class User {
     constructor() {
         this.isActive = true;
@@ -33,12 +33,12 @@ let User = class User {
     }
     hashPassword() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.password = (0, node_crypto_1.hash)("sha256", this.password);
+            this.password = yield (0, bcrypt_1.hash)(this.password, 10);
         });
     }
     comparePassword(password) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.password === (0, node_crypto_1.hash)("sha256", password);
+            return (0, bcrypt_1.compare)(password, this.password);
         });
     }
 };
