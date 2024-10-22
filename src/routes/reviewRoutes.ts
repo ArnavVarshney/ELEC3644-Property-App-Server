@@ -10,22 +10,23 @@ export async function createReview(
   authorId: string,
   rating: number,
   content: string,
-  userId?: string,
-  propertyId?: string,
+  reviewedUserId?: string,
+  reviewedPropertyId?: string,
 ) {
   const review = new Review();
   const author = await AppDataSource.manager.findOne(User, {
     where: { id: authorId },
   });
   if (!author) return;
-  if (userId) {
+  if (reviewedUserId) {
     const user = await AppDataSource.manager.findOne(User, {
-      where: { id: userId },
+      where: { id: reviewedUserId },
     });
+    console.log(user);
     if (user) review.reviewedUser = user;
-  } else if (propertyId) {
+  } else if (reviewedPropertyId) {
     const property = await AppDataSource.manager.findOne(Property, {
-      where: { id: propertyId },
+      where: { id: reviewedPropertyId },
     });
     if (property) review.reviewedProperty = property;
   }
@@ -62,7 +63,8 @@ reviewRouter.get("/:id", async (req, res) => {
 });
 
 reviewRouter.post("/", async (req, res) => {
-  const { authorId, rating, content, userId, propertyId } = req.body;
+  const { authorId, rating, content, reviewedUserId, reviewedPropertyId } =
+    req.body;
   if (!authorId || !rating || !content) {
     res.status(400).send("Author ID, rating, and content are required");
     return;
@@ -72,8 +74,8 @@ reviewRouter.post("/", async (req, res) => {
     authorId,
     rating,
     content,
-    userId,
-    propertyId,
+    reviewedUserId,
+    reviewedPropertyId,
   );
   if (review) res.json(review);
   else res.status(400).send("Failed to create review");
