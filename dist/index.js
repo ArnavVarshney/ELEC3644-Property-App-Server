@@ -79,7 +79,7 @@ app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 app.use("/users", userRoutes_1.default);
 app.use("/messages", messageRoutes_1.default);
 app.use("/reviews", reviewRoutes_1.default);
-app.use("properties", propertyRoutes_1.default);
+app.use("/properties", propertyRoutes_1.default);
 app.use("/images", express_1.default.static("images"));
 server.listen(port, () => {
     console.log(`Server running at port http://localhost:${port}`);
