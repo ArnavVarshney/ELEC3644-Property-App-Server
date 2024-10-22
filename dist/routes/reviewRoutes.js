@@ -53,17 +53,25 @@ function createReview(authorId, rating, content, reviewedUserId, reviewedPropert
 }
 function getReview(reviewId) {
     return __awaiter(this, void 0, void 0, function* () {
-        return database_1.AppDataSource.manager.findOne(Review_1.Review, { where: { id: reviewId } });
+        return database_1.AppDataSource.manager.findOne(Review_1.Review, {
+            where: { id: reviewId },
+            relations: ['author', 'reviewedUser', 'reviewedProperty']
+        });
     });
 }
 function getReviews(userId, propertyId) {
     return __awaiter(this, void 0, void 0, function* () {
         const reviewRepository = database_1.AppDataSource.getRepository(Review_1.Review);
+        let whereClause = {};
+        if (userId) {
+            whereClause = { reviewedUser: { id: userId } };
+        }
+        else if (propertyId) {
+            whereClause = { reviewedProperty: { id: propertyId } };
+        }
         return reviewRepository.find({
-            where: [
-                { reviewedUser: { id: userId } },
-                { reviewedProperty: { id: propertyId } },
-            ],
+            where: whereClause,
+            relations: ['author', 'reviewedUser', 'reviewedProperty']
         });
     });
 }
