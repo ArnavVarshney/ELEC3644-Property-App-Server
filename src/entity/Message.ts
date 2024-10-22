@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -12,7 +13,11 @@ export class Message {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Column()
+  senderId: string;
+
   @ManyToOne(() => User)
+  @JoinColumn({ name: "senderId" })
   sender: User;
 
   @ManyToOne(() => User)

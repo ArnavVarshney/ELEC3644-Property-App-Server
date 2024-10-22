@@ -27,18 +27,30 @@ export async function createMessage(
 }
 
 export async function getMessage(messageId: string) {
-  return AppDataSource.manager.findOne(Message, { where: { id: messageId } });
+  return AppDataSource.manager.findOne(Message, { where: { id: messageId }, relations: ["sender", "receiver"] });
 }
 
 export async function getMessages(userId: string) {
   const messageRepository = AppDataSource.getRepository(Message);
   return messageRepository.find({
     where: [{ sender: { id: userId } }, { receiver: { id: userId } }],
+    relations: ["sender", "receiver"]
+  });
+}
+
+export async function getChat(userId1: string, userId2: string) {
+  const messageRepository = AppDataSource.getRepository(Message);
+  return messageRepository.find({
+    where: [
+      { sender: { id: userId1 }, receiver: { id: userId2 } },
+      { sender: { id: userId2 }, receiver: { id: userId1 } },
+    ],
+    select: ["id", "content", "senderId"],
   });
 }
 
 export async function getAllMessages() {
-  return AppDataSource.manager.find(Message);
+  return AppDataSource.manager.find(Message, { relations: ["sender", "receiver"] });
 }
 
 messageRouter.get("/", async (req, res) => {
@@ -60,6 +72,17 @@ messageRouter.post("/", async (req, res) => {
   }
   const message = await createMessage(senderId, receiverId, content);
   res.json(message);
+});
+
+messageRouter.get("/chat/:senderId/:receiverId", async (req, res) => {
+  const { senderId, receiverId } = req.params;
+  if (!senderId || !receiverId) {
+    res.status(400).send("User IDs are required");
+    return;
+  } else {
+    const messages = await getChat(senderId, receiverId);
+    res.json(messages);
+  }
 });
 
 export default messageRouter;
