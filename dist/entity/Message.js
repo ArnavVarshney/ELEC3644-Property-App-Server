@@ -23,7 +23,12 @@ __decorate([
     __metadata("design:type", String)
 ], Message.prototype, "id", void 0);
 __decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Message.prototype, "senderId", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)(() => User_1.User),
+    (0, typeorm_1.JoinColumn)({ name: "senderId" }),
     __metadata("design:type", User_1.User)
 ], Message.prototype, "sender", void 0);
 __decorate([

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createMessage = createMessage;
 exports.getMessage = getMessage;
 exports.getMessages = getMessages;
+exports.getChat = getChat;
 exports.getAllMessages = getAllMessages;
 const database_1 = require("../database");
 const express_1 = __importDefault(require("express"));
@@ -41,7 +42,7 @@ function createMessage(senderId, receiverId, content) {
 }
 function getMessage(messageId) {
     return __awaiter(this, void 0, void 0, function* () {
-        return database_1.AppDataSource.manager.findOne(Message_1.Message, { where: { id: messageId } });
+        return database_1.AppDataSource.manager.findOne(Message_1.Message, { where: { id: messageId }, relations: ["sender", "receiver"] });
     });
 }
 function getMessages(userId) {
@@ -49,12 +50,25 @@ function getMessages(userId) {
         const messageRepository = database_1.AppDataSource.getRepository(Message_1.Message);
         return messageRepository.find({
             where: [{ sender: { id: userId } }, { receiver: { id: userId } }],
+            relations: ["sender", "receiver"]
+        });
+    });
+}
+function getChat(userId1, userId2) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const messageRepository = database_1.AppDataSource.getRepository(Message_1.Message);
+        return messageRepository.find({
+            where: [
+                { sender: { id: userId1 }, receiver: { id: userId2 } },
+                { sender: { id: userId2 }, receiver: { id: userId1 } },
+            ],
+            select: ["id", "content", "senderId"],
         });
     });
 }
 function getAllMessages() {
     return __awaiter(this, void 0, void 0, function* () {
-        return database_1.AppDataSource.manager.find(Message_1.Message);
+        return database_1.AppDataSource.manager.find(Message_1.Message, { relations: ["sender", "receiver"] });
     });
 }
 messageRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -76,5 +90,16 @@ messageRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function
     }
     const message = yield createMessage(senderId, receiverId, content);
     res.json(message);
+}));
+messageRouter.get("/chat/:senderId/:receiverId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { senderId, receiverId } = req.params;
+    if (!senderId || !receiverId) {
+        res.status(400).send("User IDs are required");
+        return;
+    }
+    else {
+        const messages = yield getChat(senderId, receiverId);
+        res.json(messages);
+    }
 }));
 exports.default = messageRouter;
