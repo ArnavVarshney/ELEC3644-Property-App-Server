@@ -105,14 +105,17 @@ messageRouter.get("/chat/:senderId/:receiverId", (req, res) => __awaiter(void 0,
 messageRouter.get("/chat/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.params;
     const messages = yield getMessages(userId);
-    const chat = {};
-    messages.forEach((message) => {
-        const otherUserId = message.senderId === userId ? message.receiverId : message.senderId;
-        if (chat[otherUserId])
-            chat[otherUserId].push(message);
-        else
-            chat[otherUserId] = [message];
-    });
-    res.json(chat);
+    const chat = messages.reduce((acc, message) => {
+        const otherUser = message.senderId === userId ? message.receiverId : message.senderId;
+        if (!acc[otherUser])
+            acc[otherUser] = [];
+        acc[otherUser].push(message);
+        return acc;
+    }, {});
+    const chatArray = Object.entries(chat).map(([key, value]) => ({
+        userId: key,
+        messages: value,
+    }));
+    res.json(chatArray);
 }));
 exports.default = messageRouter;
