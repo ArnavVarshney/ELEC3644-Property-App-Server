@@ -34,7 +34,7 @@ export async function getMessages(userId: string) {
   const messageRepository = AppDataSource.getRepository(Message);
   return messageRepository.find({
     where: [{ sender: { id: userId } }, { receiver: { id: userId } }],
-    relations: ["sender", "receiver"]
+    select: ["id", "content", "senderId", "receiverId"],
   });
 }
 
@@ -45,7 +45,7 @@ export async function getChat(userId1: string, userId2: string) {
       { sender: { id: userId1 }, receiver: { id: userId2 } },
       { sender: { id: userId2 }, receiver: { id: userId1 } },
     ],
-    select: ["id", "content", "senderId"],
+    select: ["id", "content", "senderId", "receiverId"],
   });
 }
 
@@ -84,5 +84,17 @@ messageRouter.get("/chat/:senderId/:receiverId", async (req, res) => {
     res.json(messages);
   }
 });
+
+messageRouter.get("/chat/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const messages = await getMessages(userId);
+  const chat: { [key: string]: Message[] } = {};
+  messages.forEach((message) => {
+    const otherUserId = message.senderId === userId ? message.receiverId : message.senderId;
+    if (chat[otherUserId]) chat[otherUserId].push(message);
+    else chat[otherUserId] = [message];
+  });
+  res.json(chat);
+})
 
 export default messageRouter;

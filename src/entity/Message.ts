@@ -20,7 +20,11 @@ export class Message {
   @JoinColumn({ name: "senderId" })
   sender: User;
 
+  @Column()
+  receiverId: string;
+
   @ManyToOne(() => User)
+  @JoinColumn({ name: "receiverId" })
   receiver: User;
 
   @Column()
