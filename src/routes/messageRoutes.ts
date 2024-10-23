@@ -88,13 +88,19 @@ messageRouter.get("/chat/:senderId/:receiverId", async (req, res) => {
 messageRouter.get("/chat/:userId", async (req, res) => {
   const { userId } = req.params;
   const messages = await getMessages(userId);
-  const chat: { [key: string]: Message[] } = {};
-  messages.forEach((message) => {
-    const otherUserId = message.senderId === userId ? message.receiverId : message.senderId;
-    if (chat[otherUserId]) chat[otherUserId].push(message);
-    else chat[otherUserId] = [message];
-  });
-  res.json(chat);
+  const chat = messages.reduce((acc, message) => {
+    const otherUser = message.senderId === userId ? message.receiverId : message.senderId;
+    if (!acc[otherUser]) acc[otherUser] = [];
+    acc[otherUser].push(message);
+    return acc;
+  }, {} as { [key: string]: Message[] });
+
+  const chatArray = Object.entries(chat).map(([key, value]) => ({
+    userId: key,
+    messages: value,
+  }));
+
+  res.json(chatArray);
 })
 
 export default messageRouter;
