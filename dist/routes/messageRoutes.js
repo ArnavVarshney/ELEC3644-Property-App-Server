@@ -50,7 +50,7 @@ function getMessages(userId) {
         const messageRepository = database_1.AppDataSource.getRepository(Message_1.Message);
         return messageRepository.find({
             where: [{ sender: { id: userId } }, { receiver: { id: userId } }],
-            relations: ["sender", "receiver"]
+            select: ["id", "content", "senderId", "receiverId"],
         });
     });
 }
@@ -62,7 +62,7 @@ function getChat(userId1, userId2) {
                 { sender: { id: userId1 }, receiver: { id: userId2 } },
                 { sender: { id: userId2 }, receiver: { id: userId1 } },
             ],
-            select: ["id", "content", "senderId"],
+            select: ["id", "content", "senderId", "receiverId"],
         });
     });
 }
@@ -101,5 +101,18 @@ messageRouter.get("/chat/:senderId/:receiverId", (req, res) => __awaiter(void 0,
         const messages = yield getChat(senderId, receiverId);
         res.json(messages);
     }
+}));
+messageRouter.get("/chat/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.params;
+    const messages = yield getMessages(userId);
+    const chat = {};
+    messages.forEach((message) => {
+        const otherUserId = message.senderId === userId ? message.receiverId : message.senderId;
+        if (chat[otherUserId])
+            chat[otherUserId].push(message);
+        else
+            chat[otherUserId] = [message];
+    });
+    res.json(chat);
 }));
 exports.default = messageRouter;
