@@ -21,6 +21,7 @@ const database_1 = require("../database");
 const express_1 = __importDefault(require("express"));
 const Message_1 = require("../entity/Message");
 const User_1 = require("../entity/User");
+const userRoutes_1 = require("./userRoutes");
 const messageRouter = express_1.default.Router({ strict: true });
 function createMessage(senderId, receiverId, content) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -42,7 +43,10 @@ function createMessage(senderId, receiverId, content) {
 }
 function getMessage(messageId) {
     return __awaiter(this, void 0, void 0, function* () {
-        return database_1.AppDataSource.manager.findOne(Message_1.Message, { where: { id: messageId }, relations: ["sender", "receiver"] });
+        return database_1.AppDataSource.manager.findOne(Message_1.Message, {
+            where: { id: messageId },
+            relations: ["sender", "receiver"],
+        });
     });
 }
 function getMessages(userId) {
@@ -68,7 +72,9 @@ function getChat(userId1, userId2) {
 }
 function getAllMessages() {
     return __awaiter(this, void 0, void 0, function* () {
-        return database_1.AppDataSource.manager.find(Message_1.Message, { relations: ["sender", "receiver"] });
+        return database_1.AppDataSource.manager.find(Message_1.Message, {
+            relations: ["sender", "receiver"],
+        });
     });
 }
 messageRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -112,10 +118,12 @@ messageRouter.get("/chat/:userId", (req, res) => __awaiter(void 0, void 0, void 
         acc[otherUser].push(message);
         return acc;
     }, {});
-    const chatArray = Object.entries(chat).map(([key, value]) => ({
-        userId: key,
-        messages: value,
-    }));
+    const chatArray = yield Promise.all(Object.entries(chat).map((_a) => __awaiter(void 0, [_a], void 0, function* ([key, value]) {
+        return ({
+            user: yield (0, userRoutes_1.getUser)(key),
+            messages: value,
+        });
+    })));
     res.json(chatArray);
 }));
 exports.default = messageRouter;
