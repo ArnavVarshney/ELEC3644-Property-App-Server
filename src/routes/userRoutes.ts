@@ -70,6 +70,15 @@ userRouter.post("/", async (req, res) => {
   }
 });
 
+userRouter.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  const user = await AppDataSource.manager.findOne(User, {
+    where: { email: email },
+  });
+  if (await user?.comparePassword(password)) res.json(user);
+  else res.status(404).send("User not found");
+});
+
 userRouter.patch("/:userId", async (req, res) => {
   const userId = req.params.userId;
   const { name, avatarUrl } = req.body;

@@ -31,8 +31,8 @@ app.get("/", async (req, res) => {
     const latestCommit = log.latest;
     const commitDate = latestCommit?.date
       ? new Date(latestCommit.date).toLocaleString("en-HK", {
-        timeZone: "Asia/Hong_Kong",
-      })
+          timeZone: "Asia/Hong_Kong",
+        })
       : "Unknown date";
     const commitUrl = `https://github.com/ArnavVarshney/ELEC3644-Property-App-Server/commit/${latestCommit?.hash}`;
     res.send(`

@@ -23,7 +23,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ select: false })
+  @Column()
   password: string;
 
   @Column({ default: true })
@@ -53,6 +53,6 @@ export class User {
   }
 
   async comparePassword(password: string) {
-    return compare(password, this.password);
+    return await compare(password, this.password);
   }
 }
