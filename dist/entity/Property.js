@@ -13,6 +13,11 @@ exports.Property = void 0;
 const typeorm_1 = require("typeorm");
 const Review_1 = require("./Review");
 let Property = class Property {
+    formatTransactionHistoryDates() {
+        if (this.transactionHistory) {
+            this.transactionHistory = this.transactionHistory.map((transaction) => (Object.assign(Object.assign({}, transaction), { date: new Date(transaction.date).toISOString() })));
+        }
+    }
 };
 exports.Property = Property;
 __decorate([
@@ -91,6 +96,12 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => Review_1.Review, (review) => review.reviewedProperty),
     __metadata("design:type", Array)
 ], Property.prototype, "reviews", void 0);
+__decorate([
+    (0, typeorm_1.BeforeInsert)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], Property.prototype, "formatTransactionHistoryDates", null);
 exports.Property = Property = __decorate([
     (0, typeorm_1.Entity)()
 ], Property);

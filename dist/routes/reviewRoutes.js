@@ -55,7 +55,7 @@ function getReview(reviewId) {
     return __awaiter(this, void 0, void 0, function* () {
         return database_1.AppDataSource.manager.findOne(Review_1.Review, {
             where: { id: reviewId },
-            relations: ['author', 'reviewedUser', 'reviewedProperty']
+            relations: ["author", "reviewedUser", "reviewedProperty"],
         });
     });
 }
@@ -71,7 +71,7 @@ function getReviews(userId, propertyId) {
         }
         return reviewRepository.find({
             where: whereClause,
-            relations: ['author', 'reviewedUser', 'reviewedProperty']
+            relations: ["author", "reviewedUser", "reviewedProperty"],
         });
     });
 }
