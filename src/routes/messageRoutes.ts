@@ -2,6 +2,7 @@ import { AppDataSource } from "../database";
 import express from "express";
 import { Message } from "../entity/Message";
 import { User } from "../entity/User";
+import { getUser } from "./userRoutes";
 
 const messageRouter = express.Router({ strict: true });
 
@@ -27,7 +28,10 @@ export async function createMessage(
 }
 
 export async function getMessage(messageId: string) {
-  return AppDataSource.manager.findOne(Message, { where: { id: messageId }, relations: ["sender", "receiver"] });
+  return AppDataSource.manager.findOne(Message, {
+    where: { id: messageId },
+    relations: ["sender", "receiver"],
+  });
 }
 
 export async function getMessages(userId: string) {
@@ -50,7 +54,9 @@ export async function getChat(userId1: string, userId2: string) {
 }
 
 export async function getAllMessages() {
-  return AppDataSource.manager.find(Message, { relations: ["sender", "receiver"] });
+  return AppDataSource.manager.find(Message, {
+    relations: ["sender", "receiver"],
+  });
 }
 
 messageRouter.get("/", async (req, res) => {
@@ -88,19 +94,25 @@ messageRouter.get("/chat/:senderId/:receiverId", async (req, res) => {
 messageRouter.get("/chat/:userId", async (req, res) => {
   const { userId } = req.params;
   const messages = await getMessages(userId);
-  const chat = messages.reduce((acc, message) => {
-    const otherUser = message.senderId === userId ? message.receiverId : message.senderId;
-    if (!acc[otherUser]) acc[otherUser] = [];
-    acc[otherUser].push(message);
-    return acc;
-  }, {} as { [key: string]: Message[] });
+  const chat = messages.reduce(
+    (acc, message) => {
+      const otherUser =
+        message.senderId === userId ? message.receiverId : message.senderId;
+      if (!acc[otherUser]) acc[otherUser] = [];
+      acc[otherUser].push(message);
+      return acc;
+    },
+    {} as { [key: string]: Message[] },
+  );
 
-  const chatArray = Object.entries(chat).map(([key, value]) => ({
-    userId: key,
-    messages: value,
-  }));
+  const chatArray = await Promise.all(
+    Object.entries(chat).map(async ([key, value]) => ({
+      user: await getUser(key),
+      messages: value,
+    })),
+  );
 
   res.json(chatArray);
-})
+});
 
 export default messageRouter;
