@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Review } from "./Review";
 
 @Entity()
@@ -62,11 +68,18 @@ export class Property {
   imageUrls: string[];
 
   @Column("simple-json", { nullable: true })
-  transactionHistory: {
-    date: Date;
-    price: number;
-  }[];
+  transactionHistory: { date: string; price: number }[];
 
   @OneToMany(() => Review, (review) => review.reviewedProperty)
   reviews: Review[];
+
+  @BeforeInsert()
+  formatTransactionHistoryDates() {
+    if (this.transactionHistory) {
+      this.transactionHistory = this.transactionHistory.map((transaction) => ({
+        ...transaction,
+        date: new Date(transaction.date).toISOString(),
+      }));
+    }
+  }
 }

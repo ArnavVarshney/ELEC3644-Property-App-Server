@@ -40,7 +40,7 @@ export async function createReview(
 export async function getReview(reviewId: string) {
   return AppDataSource.manager.findOne(Review, {
     where: { id: reviewId },
-    relations: ['author', 'reviewedUser', 'reviewedProperty']
+    relations: ["author", "reviewedUser", "reviewedProperty"],
   });
 }
 
@@ -56,7 +56,7 @@ export async function getReviews(userId?: string, propertyId?: string) {
 
   return reviewRepository.find({
     where: whereClause,
-    relations: ['author', 'reviewedUser', 'reviewedProperty']
+    relations: ["author", "reviewedUser", "reviewedProperty"],
   });
 }
 

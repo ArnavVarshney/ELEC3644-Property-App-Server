@@ -21,7 +21,7 @@ export async function createProperty(
   buildingDirection: string,
   estate: string,
   imageUrls?: string[],
-  transactionHistory?: { date: Date; price: number }[],
+  transactionHistory?: { date: string; price: number }[],
 ) {
   const property = new Property();
   property.name = name;
@@ -64,7 +64,7 @@ export async function updateProperty(
   buildingDirection?: string,
   estate?: string,
   imageUrls?: string[],
-  transactionHistory?: { date: Date; price: number }[],
+  transactionHistory?: { date: string; price: number }[],
 ) {
   const property = await AppDataSource.manager.findOne(Property, {
     where: { id: propertyId },
