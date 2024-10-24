@@ -81,6 +81,16 @@ userRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.json(user);
     }
 }));
+userRouter.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password } = req.body;
+    const user = yield database_1.AppDataSource.manager.findOne(User_1.User, {
+        where: { email: email },
+    });
+    if (yield (user === null || user === void 0 ? void 0 : user.comparePassword(password)))
+        res.json(user);
+    else
+        res.status(404).send("User not found");
+}));
 userRouter.patch("/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.params.userId;
     const { name, avatarUrl } = req.body;

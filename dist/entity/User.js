@@ -38,7 +38,7 @@ let User = class User {
     }
     comparePassword(password) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, bcrypt_1.compare)(password, this.password);
+            return yield (0, bcrypt_1.compare)(password, this.password);
         });
     }
 };
@@ -56,7 +56,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ select: false }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([

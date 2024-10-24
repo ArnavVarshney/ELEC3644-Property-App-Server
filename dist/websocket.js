@@ -67,6 +67,10 @@ function handleWS(ws) {
                         type: "messageHistory",
                         messages: messages,
                     }));
+                    break;
+                case "ping":
+                    ws.send(JSON.stringify({ type: "pong" }));
+                    break;
             }
         }
         catch (e) {
