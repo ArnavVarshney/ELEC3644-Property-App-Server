@@ -50,7 +50,7 @@ app.use("/users", userRouter);
 app.use("/messages", messageRouter);
 app.use("/reviews", reviewRouter);
 app.use("/properties", propertyRouter);
-app.use("/images", express.static("images"));
+app.use("/images", express.static("images", { maxAge: "1h" }));
 
 server.listen(port, () => {
   console.log(`Server running at port http://localhost:${port}`);
