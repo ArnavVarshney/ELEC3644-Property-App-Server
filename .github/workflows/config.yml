@@ -40,5 +40,4 @@ jobs:
           script: |
             cd /home/ubuntu/ELEC3644-Property-App-Server
             git pull
-            source /home/ubuntu/.bashrc
-            npm i
+            /home/ubuntu/.nvm/versions/node/v23.0.0/bin/npm install
