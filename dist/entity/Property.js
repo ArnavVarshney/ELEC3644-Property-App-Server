@@ -85,7 +85,7 @@ __decorate([
     __metadata("design:type", String)
 ], Property.prototype, "estate", void 0);
 __decorate([
-    (0, typeorm_1.Column)("simple-array", { nullable: true }),
+    (0, typeorm_1.Column)("simple-json", { nullable: true }),
     __metadata("design:type", Array)
 ], Property.prototype, "imageUrls", void 0);
 __decorate([
