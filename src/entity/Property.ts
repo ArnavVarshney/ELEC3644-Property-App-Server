@@ -64,7 +64,7 @@ export class Property {
   @Column()
   estate: string;
 
-  @Column("simple-array", { nullable: true })
+  @Column("simple-json", { nullable: true })
   imageUrls: string[];
 
   @Column("simple-json", { nullable: true })
