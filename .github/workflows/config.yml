@@ -21,6 +21,7 @@ jobs:
         run: npm run build
 
       - name: Push to GitHub
+        continue-on-error: true
         run: |
           git config --global user.name 'Build Action'
           git config --global user.email '<>'
