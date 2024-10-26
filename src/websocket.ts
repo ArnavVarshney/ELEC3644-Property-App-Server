@@ -32,11 +32,12 @@ export function handleWS(ws: WebSocket) {
 
         case "sendMessageToUser":
           if (!userId) break;
-          if (data.receiverId && data.content) {
+          if ((data.receiverId || data.receiverEmail) && data.content) {
             const message = await createMessage(
               userId,
-              data.receiverId,
               data.content,
+              data.receiverId,
+              data.receiverEmail,
             );
             if (message) {
               ws.send(

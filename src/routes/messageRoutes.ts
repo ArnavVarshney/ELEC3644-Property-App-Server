@@ -8,15 +8,16 @@ const messageRouter = express.Router({ strict: true });
 
 export async function createMessage(
   senderId: string,
-  receiverId: string,
   content: string,
+  receiverId?: string,
+  receiverEmail?: string,
 ) {
   const message = new Message();
   const sender = await AppDataSource.manager.findOne(User, {
     where: { id: senderId },
   });
   const receiver = await AppDataSource.manager.findOne(User, {
-    where: { id: receiverId },
+    where: receiverId ? { id: receiverId } : { email: receiverEmail },
   });
   if (sender && receiver) {
     message.sender = sender;
