@@ -39,8 +39,8 @@ function handleWS(ws) {
                 case "sendMessageToUser":
                     if (!userId)
                         break;
-                    if (data.receiverId && data.content) {
-                        const message = yield (0, messageRoutes_1.createMessage)(userId, data.receiverId, data.content);
+                    if ((data.receiverId || data.receiverEmail) && data.content) {
+                        const message = yield (0, messageRoutes_1.createMessage)(userId, data.content, data.receiverId, data.receiverEmail);
                         if (message) {
                             ws.send(JSON.stringify({
                                 type: "newMessage",
