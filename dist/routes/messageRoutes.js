@@ -23,14 +23,14 @@ const Message_1 = require("../entity/Message");
 const User_1 = require("../entity/User");
 const userRoutes_1 = require("./userRoutes");
 const messageRouter = express_1.default.Router({ strict: true });
-function createMessage(senderId, receiverId, content) {
+function createMessage(senderId, content, receiverId, receiverEmail) {
     return __awaiter(this, void 0, void 0, function* () {
         const message = new Message_1.Message();
         const sender = yield database_1.AppDataSource.manager.findOne(User_1.User, {
             where: { id: senderId },
         });
         const receiver = yield database_1.AppDataSource.manager.findOne(User_1.User, {
-            where: { id: receiverId },
+            where: receiverId ? { id: receiverId } : { email: receiverEmail },
         });
         if (sender && receiver) {
             message.sender = sender;
