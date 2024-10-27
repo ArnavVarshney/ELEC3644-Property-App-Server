@@ -39,7 +39,7 @@ export async function getMessages(userId: string) {
   const messageRepository = AppDataSource.getRepository(Message);
   return messageRepository.find({
     where: [{ sender: { id: userId } }, { receiver: { id: userId } }],
-    select: ["id", "content", "senderId", "receiverId"],
+    select: ["id", "content", "senderId", "receiverId", "timestamp"],
   });
 }
 
