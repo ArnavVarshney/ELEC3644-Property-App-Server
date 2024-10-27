@@ -54,7 +54,7 @@ function getMessages(userId) {
         const messageRepository = database_1.AppDataSource.getRepository(Message_1.Message);
         return messageRepository.find({
             where: [{ sender: { id: userId } }, { receiver: { id: userId } }],
-            select: ["id", "content", "senderId", "receiverId"],
+            select: ["id", "content", "senderId", "receiverId", "timestamp"],
         });
     });
 }
