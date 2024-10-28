@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
   type: "sqlite",
   database: "./chat.db",
   synchronize: true,
-  logging: true,
+  logging: false,
   entities: [User, Message, Group, Review, Property],
 });
 

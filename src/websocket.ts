@@ -26,7 +26,9 @@ export function handleWS(ws: WebSocket) {
                   userId: user.id,
                 }),
               );
-              console.log(`[WS] [${new Date().toLocaleTimeString()}] User set to ${user.id}`);
+              console.log(
+                `[WS] [${new Date().toLocaleTimeString()}] User set to ${user.id}`,
+              );
             }
           }
           break;
@@ -67,7 +69,9 @@ export function handleWS(ws: WebSocket) {
                 }
               }
 
-              console.log(`[WS] [${new Date().toLocaleTimeString()}] Message sent from user ${userId} to user ${(message.receiver?.id).toLocaleLowerCase(),}: ${message.content}`);
+              console.log(
+                `[WS] [${new Date().toLocaleTimeString()}] Message sent from user ${userId} to user ${(message.receiver?.id).toLocaleLowerCase()}: ${message.content}`,
+              );
             }
           }
           break;
