@@ -26,6 +26,7 @@ export function handleWS(ws: WebSocket) {
                   userId: user.id,
                 }),
               );
+              console.log(`[WS] [${new Date().toLocaleTimeString()}] User set to ${user.id}`);
             }
           }
           break;
@@ -50,15 +51,21 @@ export function handleWS(ws: WebSocket) {
                 }),
               );
 
-              ws.send(
-                JSON.stringify({
-                  type: "messageSent",
-                  id: message.id,
-                  receiverId: message.receiver?.id,
-                  content: message.content,
-                  timestamp: message.timestamp,
-                }),
-              );
+              for (const [client, user] of clients) {
+                if (user.id === message.receiver?.id) {
+                  client.send(
+                    JSON.stringify({
+                      type: "newMessage",
+                      id: message.id,
+                      senderId: message.sender?.id,
+                      content: message.content,
+                      timestamp: message.timestamp,
+                    }),
+                  );
+                }
+              }
+
+              console.log(`[WS] [${new Date().toLocaleTimeString()}] Message sent from user ${userId} to user ${message.receiver?.id}: ${message.content}`);
             }
           }
           break;
