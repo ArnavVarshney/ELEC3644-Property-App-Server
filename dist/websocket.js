@@ -46,24 +46,24 @@ function handleWS(ws) {
                             ws.send(JSON.stringify({
                                 type: "newMessage",
                                 id: message.id,
-                                receiverId: (_b = message.sender) === null || _b === void 0 ? void 0 : _b.id,
-                                senderId: (_c = message.sender) === null || _c === void 0 ? void 0 : _c.id,
+                                receiverId: ((_b = message.sender) === null || _b === void 0 ? void 0 : _b.id).toLocaleLowerCase(),
+                                senderId: ((_c = message.sender) === null || _c === void 0 ? void 0 : _c.id).toLocaleLowerCase(),
                                 content: message.content,
                                 timestamp: message.timestamp,
                             }));
                             for (const [client, user] of clients) {
-                                if (user.id === ((_d = message.receiver) === null || _d === void 0 ? void 0 : _d.id)) {
+                                if (user.id === ((_d = message.receiver) === null || _d === void 0 ? void 0 : _d.id).toLocaleLowerCase()) {
                                     client.send(JSON.stringify({
                                         type: "newMessage",
                                         id: message.id,
-                                        senderId: (_e = message.sender) === null || _e === void 0 ? void 0 : _e.id,
-                                        receiverId: (_f = message.receiver) === null || _f === void 0 ? void 0 : _f.id,
+                                        senderId: ((_e = message.sender) === null || _e === void 0 ? void 0 : _e.id).toLocaleLowerCase(),
+                                        receiverId: ((_f = message.receiver) === null || _f === void 0 ? void 0 : _f.id).toLocaleLowerCase(),
                                         content: message.content,
                                         timestamp: message.timestamp,
                                     }));
                                 }
                             }
-                            console.log(`[WS] [${new Date().toLocaleTimeString()}] Message sent from user ${userId} to user ${(_g = message.receiver) === null || _g === void 0 ? void 0 : _g.id}: ${message.content}`);
+                            console.log(`[WS] [${new Date().toLocaleTimeString()}] Message sent from user ${userId} to user ${((_g = message.receiver) === null || _g === void 0 ? void 0 : _g.id).toLocaleLowerCase()}: ${message.content}`);
                         }
                     }
                     break;

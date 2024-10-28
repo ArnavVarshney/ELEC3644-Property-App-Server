@@ -22,7 +22,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
     type: "sqlite",
     database: "./chat.db",
     synchronize: true,
-    logging: true,
+    logging: false,
     entities: [User_1.User, Message_1.Message, Group_1.Group, Review_1.Review, Property_1.Property],
 });
 function initDatabase() {
