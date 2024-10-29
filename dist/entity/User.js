@@ -23,6 +23,7 @@ const typeorm_1 = require("typeorm");
 const Group_1 = require("./Group");
 const Review_1 = require("./Review");
 const bcrypt_1 = require("bcrypt");
+const Property_1 = require("./Property");
 let User = class User {
     constructor() {
         this.isActive = true;
@@ -80,6 +81,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => Review_1.Review, (review) => review.reviewedUser),
     __metadata("design:type", Array)
 ], User.prototype, "reviews", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Property_1.Property, (property) => property.agent),
+    __metadata("design:type", Array)
+], User.prototype, "propertyListings", void 0);
 __decorate([
     (0, typeorm_1.BeforeInsert)(),
     __metadata("design:type", Function),

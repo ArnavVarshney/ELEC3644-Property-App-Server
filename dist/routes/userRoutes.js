@@ -20,7 +20,6 @@ exports.getUsers = getUsers;
 const database_1 = require("../database");
 const express_1 = __importDefault(require("express"));
 const User_1 = require("../entity/User");
-const typeorm_1 = require("typeorm");
 const userRouter = express_1.default.Router({ strict: true });
 function createUser(name, email, password, avatarUrl) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -55,7 +54,20 @@ function getUser(userId) {
 }
 function getAgents() {
     return __awaiter(this, void 0, void 0, function* () {
-        return database_1.AppDataSource.manager.find(User_1.User, { where: { email: (0, typeorm_1.Like)("%.agents") } });
+        return database_1.AppDataSource.getRepository(User_1.User)
+            .createQueryBuilder("user")
+            .leftJoinAndSelect("user.propertyListings", "property")
+            .where("user.email LIKE :email", { email: "%.agents" })
+            .select([
+            "user.id",
+            "user.name",
+            "user.email",
+            "user.avatarUrl",
+            "user.createdAt",
+            "property.id",
+            "property.name",
+        ])
+            .getMany();
     });
 }
 function getUsers() {
