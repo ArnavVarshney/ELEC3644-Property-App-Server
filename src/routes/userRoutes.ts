@@ -43,7 +43,21 @@ export async function getUser(userId: string) {
 }
 
 export async function getAgents() {
-  return AppDataSource.manager.find(User, { where: { email: Like("%.agents") } });
+  return AppDataSource.getRepository(User)
+    .createQueryBuilder("user")
+    .leftJoinAndSelect("user.propertyListings", "property")
+    .where("user.email LIKE :email", { email: "%.agents" })
+    .select([
+      "user.id",
+      "user.name",
+      "user.email",
+      "user.avatarUrl",
+      "user.createdAt",
+      "property.id",
+      "property.name",
+    ])
+    .getMany();
+
 }
 
 export async function getUsers() {

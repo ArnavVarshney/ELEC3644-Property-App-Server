@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToMany,
@@ -11,6 +12,7 @@ import {
 import { Group } from "./Group";
 import { Review } from "./Review";
 import { compare, hash } from "bcrypt";
+import { Property } from "./Property";
 
 @Entity()
 export class User {
@@ -41,6 +43,9 @@ export class User {
 
   @OneToMany(() => Review, (review) => review.reviewedUser)
   reviews: Review[];
+
+  @OneToMany(() => Property, (property) => property.agent)
+  propertyListings: Property[];
 
   @BeforeInsert()
   emailToLowerCase() {
