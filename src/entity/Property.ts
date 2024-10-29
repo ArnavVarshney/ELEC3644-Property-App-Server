@@ -4,8 +4,11 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm";
 import { Review } from "./Review";
+import { User } from "./User";
 
 @Entity()
 export class Property {
@@ -72,6 +75,13 @@ export class Property {
 
   @OneToMany(() => Review, (review) => review.reviewedProperty)
   reviews: Review[];
+
+  @Column()
+  agentId: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: "agentId" })
+  agent: User;
 
   @BeforeInsert()
   formatTransactionHistoryDates() {

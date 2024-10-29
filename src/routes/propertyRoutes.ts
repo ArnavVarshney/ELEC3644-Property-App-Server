@@ -22,6 +22,7 @@ export async function createProperty(
   estate: string,
   imageUrls?: string[],
   transactionHistory?: { date: string; price: number }[],
+  agentId?: string,
 ) {
   const property = new Property();
   property.name = name;
@@ -41,6 +42,7 @@ export async function createProperty(
   property.estate = estate;
   property.imageUrls = imageUrls ?? [];
   property.transactionHistory = transactionHistory ?? [];
+  property.agentId = agentId ?? "";
 
   await AppDataSource.manager.save(property);
   return property;
@@ -65,6 +67,7 @@ export async function updateProperty(
   estate?: string,
   imageUrls?: string[],
   transactionHistory?: { date: string; price: number }[],
+  agentId?: string,
 ) {
   const property = await AppDataSource.manager.findOne(Property, {
     where: { id: propertyId },
@@ -92,6 +95,7 @@ export async function updateProperty(
     property.imageUrls = imageUrls ?? property.imageUrls;
     property.transactionHistory =
       transactionHistory ?? property.transactionHistory;
+    property.agentId = agentId ?? property.agentId;
 
     await AppDataSource.manager.save(property);
     return property;
@@ -136,6 +140,7 @@ propertyRouter.post("/", async (req, res) => {
     estate,
     imageUrls,
     transactionHistory,
+    agentId,
   } = req.body;
   if (
     !name ||
@@ -173,6 +178,7 @@ propertyRouter.post("/", async (req, res) => {
     estate,
     imageUrls,
     transactionHistory,
+    agentId,
   );
   res.json(property);
 });
@@ -197,6 +203,7 @@ propertyRouter.patch("/:propertyId", async (req, res) => {
     estate,
     imageUrls,
     transactionHistory,
+    agentId,
   } = req.body;
   const property = await updateProperty(
     propertyId,
@@ -217,6 +224,7 @@ propertyRouter.patch("/:propertyId", async (req, res) => {
     estate,
     imageUrls,
     transactionHistory,
+    agentId,
   );
   if (property) res.json(property);
   else res.status(404).send("Property not found");
