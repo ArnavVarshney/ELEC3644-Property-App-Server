@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Property = void 0;
 const typeorm_1 = require("typeorm");
 const Review_1 = require("./Review");
+const User_1 = require("./User");
 let Property = class Property {
     formatTransactionHistoryDates() {
         if (this.transactionHistory) {
@@ -96,6 +97,15 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => Review_1.Review, (review) => review.reviewedProperty),
     __metadata("design:type", Array)
 ], Property.prototype, "reviews", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Property.prototype, "agentId", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => User_1.User),
+    (0, typeorm_1.JoinColumn)({ name: "agentId" }),
+    __metadata("design:type", User_1.User)
+], Property.prototype, "agent", void 0);
 __decorate([
     (0, typeorm_1.BeforeInsert)(),
     __metadata("design:type", Function),
