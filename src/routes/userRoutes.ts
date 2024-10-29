@@ -1,6 +1,7 @@
 import { AppDataSource } from "../database";
 import express from "express";
 import { User } from "../entity/User";
+import { Like } from "typeorm";
 
 const userRouter = express.Router({ strict: true });
 
@@ -41,12 +42,20 @@ export async function getUser(userId: string) {
   return AppDataSource.manager.findOne(User, { where: { id: userId } });
 }
 
+export async function getAgents() {
+  return AppDataSource.manager.find(User, { where: { email: Like("%.agents") } });
+}
+
 export async function getUsers() {
   return AppDataSource.manager.find(User);
 }
 
 userRouter.get("/", async (req, res) => {
   res.json(await getUsers());
+});
+
+userRouter.get("/agents", async (req, res) => {
+  res.json(await getAgents());
 });
 
 userRouter.get("/:userId", async (req, res) => {
