@@ -15,10 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createUser = createUser;
 exports.updateUser = updateUser;
 exports.getUser = getUser;
+exports.getAgents = getAgents;
 exports.getUsers = getUsers;
 const database_1 = require("../database");
 const express_1 = __importDefault(require("express"));
 const User_1 = require("../entity/User");
+const typeorm_1 = require("typeorm");
 const userRouter = express_1.default.Router({ strict: true });
 function createUser(name, email, password, avatarUrl) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -51,6 +53,11 @@ function getUser(userId) {
         return database_1.AppDataSource.manager.findOne(User_1.User, { where: { id: userId } });
     });
 }
+function getAgents() {
+    return __awaiter(this, void 0, void 0, function* () {
+        return database_1.AppDataSource.manager.find(User_1.User, { where: { email: (0, typeorm_1.Like)("%.agents") } });
+    });
+}
 function getUsers() {
     return __awaiter(this, void 0, void 0, function* () {
         return database_1.AppDataSource.manager.find(User_1.User);
@@ -58,6 +65,9 @@ function getUsers() {
 }
 userRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json(yield getUsers());
+}));
+userRouter.get("/agents", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.json(yield getAgents());
 }));
 userRouter.get("/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.params.userId;
