@@ -81,6 +81,7 @@ wishlistRouter.get("/:userId", (req, res) => __awaiter(void 0, void 0, void 0, f
         if (property === null) {
             continue;
         }
+        property.id = property.id.toUpperCase();
         favorites[folderName].push(property);
     }
     res.json(favorites);
