@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
 } from "typeorm";
 import { Review } from "./Review";
 import { User } from "./User";
@@ -92,4 +93,7 @@ export class Property {
       }));
     }
   }
+
+  @CreateDateColumn()
+  timestamp: Date = new Date();
 }

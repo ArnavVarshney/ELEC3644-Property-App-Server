@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { User } from "./User";
 import { Property } from "./Property";
 
@@ -21,4 +27,7 @@ export class Review {
 
   @ManyToOne(() => User, (user) => user.reviews)
   reviewedUser: User;
+
+  @CreateDateColumn()
+  timestamp: Date = new Date();
 }
