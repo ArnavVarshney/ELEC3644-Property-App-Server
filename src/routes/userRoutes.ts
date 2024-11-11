@@ -71,7 +71,7 @@ export async function addWishlist(
   propertyId: string,
   folderName: string,
 ) {
-  const wishlist = new Wishlist();
+  let wishlist = new Wishlist();
   const user = await AppDataSource.manager.findOneBy(User,  { id : userId })
   const property = await AppDataSource.manager.findOneBy(Property, { id: propertyId })
 
@@ -79,8 +79,8 @@ export async function addWishlist(
   wishlist.user = user!
   wishlist.property = property!
 
-  await AppDataSource.manager.save(wishlist);
-  return user;
+  const res = await AppDataSource.manager.save(wishlist);
+  return res
 }
 
 export async function removeWishlist(
@@ -95,7 +95,7 @@ export async function removeWishlist(
 export async function getWishlists(
   userId: string
 ) {
-  const res = await AppDataSource.manager.query(`SELECT * FROM WISHLIST WHERE user='${userId}'`)
+  const res = await AppDataSource.manager.createQueryBuilder().select("*").from(Wishlist, "W").where("W.user=:id", { id: userId }).getMany()
   return res;
 }
 
