@@ -89,7 +89,7 @@ wishlistRouter.post("/", async (req, res) => {
     const wishlist = await addWishlist(userId, propertyId, folderName);
 
     if (wishlist) res.json(wishlist);
-    else res.status(500).send("Something bad happened or either user or property doesn't exist, or both");
+    else res.status(500).send({"message": "Something bad happened. Either no property or no user, or both"});
 });
 
 wishlistRouter.delete("/", async (req, res) => {
@@ -97,7 +97,7 @@ wishlistRouter.delete("/", async (req, res) => {
     const wishlist = await removeWishlist(userId, propertyId, folderName);
 
     if (wishlist) res.json(wishlist);
-    else res.status(500).send("Something bad happened");
+    else res.status(500).send({"message": "Something bad happened"});
 });
 
 export default wishlistRouter
