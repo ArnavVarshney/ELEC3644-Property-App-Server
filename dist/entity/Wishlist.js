@@ -25,10 +25,18 @@ __decorate([
     __metadata("design:type", String)
 ], Wishlist.prototype, "folderName", void 0);
 __decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Wishlist.prototype, "userId", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)(() => User_1.User),
     (0, typeorm_1.JoinColumn)({ name: "userId" }),
     __metadata("design:type", User_1.User)
 ], Wishlist.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Wishlist.prototype, "propertyId", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => Property_1.Property),
     (0, typeorm_1.JoinColumn)({ name: "propertyId" }),

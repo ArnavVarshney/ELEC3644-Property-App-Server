@@ -17,14 +17,9 @@ exports.updateUser = updateUser;
 exports.getUser = getUser;
 exports.getAgents = getAgents;
 exports.getUsers = getUsers;
-exports.addWishlist = addWishlist;
-exports.removeWishlist = removeWishlist;
-exports.getWishlists = getWishlists;
 const database_1 = require("../database");
 const express_1 = __importDefault(require("express"));
 const User_1 = require("../entity/User");
-const Wishlist_1 = require("../entity/Wishlist");
-const Property_1 = require("../entity/Property");
 const userRouter = express_1.default.Router({ strict: true });
 function createUser(name, email, password, avatarUrl) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -78,30 +73,6 @@ function getAgents() {
 function getUsers() {
     return __awaiter(this, void 0, void 0, function* () {
         return database_1.AppDataSource.manager.find(User_1.User);
-    });
-}
-function addWishlist(userId, propertyId, folderName) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let wishlist = new Wishlist_1.Wishlist();
-        const user = yield database_1.AppDataSource.manager.findOneBy(User_1.User, { id: userId });
-        const property = yield database_1.AppDataSource.manager.findOneBy(Property_1.Property, { id: propertyId });
-        wishlist.folderName = folderName;
-        wishlist.user = user;
-        wishlist.property = property;
-        const res = yield database_1.AppDataSource.manager.save(wishlist);
-        return res;
-    });
-}
-function removeWishlist(userId, propertyId, folderName) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const res = yield database_1.AppDataSource.manager.delete(Wishlist_1.Wishlist, { user: userId, property: propertyId, folderName: folderName });
-        return res;
-    });
-}
-function getWishlists(userId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const res = yield database_1.AppDataSource.manager.createQueryBuilder().select("*").from(Wishlist_1.Wishlist, "W").where("W.user=:id", { id: userId }).getMany();
-        return res;
     });
 }
 userRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

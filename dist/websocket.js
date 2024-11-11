@@ -79,57 +79,6 @@ function handleWS(ws) {
                 case "ping":
                     ws.send(JSON.stringify({ type: "pong" }));
                     break;
-                case "addWishlist":
-                    if (!userId)
-                        break;
-                    let addedWishlist = yield (0, userRoutes_1.addWishlist)(userId, data.propertyId, data.folderName);
-                    if (addedWishlist) {
-                        ws.send(JSON.stringify({
-                            type: "wishlistAdd",
-                            addedWishlist
-                        }));
-                    }
-                    break;
-                case "removeWishlist":
-                    if (!userId)
-                        break;
-                    let removedWishlist = yield (0, userRoutes_1.removeWishlist)(userId, data.propertyId, data.folderName);
-                    if (removedWishlist) {
-                        ws.send(JSON.stringify({
-                            type: "wishlistRemove",
-                            removedWishlist
-                        }));
-                    }
-                    break;
-                case "getWishlist":
-                    if (!userId)
-                        break;
-                    const rows = yield (0, userRoutes_1.getWishlists)(userId);
-                    let folderNames = [];
-                    let properties = [];
-                    for (const row of rows) {
-                        if (!folderNames.includes(row.folderName)) {
-                            folderNames.push(row.folderName);
-                            properties.push([row.property]);
-                        }
-                        else {
-                            let idx = folderNames.findIndex((name) => name === row.folderName);
-                            properties[idx].push(row.property);
-                        }
-                    }
-                    let wishlists = [];
-                    for (let i = 0; i < folderNames.length; ++i) {
-                        const wishlist = {
-                            "name": folderNames[i],
-                            "properties": properties[i]
-                        };
-                        wishlists.push(wishlist);
-                    }
-                    ws.send(JSON.stringify({
-                        type: "wishlistGet",
-                        wishlists
-                    }));
-                    break;
             }
         }
         catch (e) {
