@@ -80,12 +80,17 @@ function updateProperty(propertyId, name, address, area, district, subDistrict, 
 }
 function getProperty(propertyId) {
     return __awaiter(this, void 0, void 0, function* () {
-        return database_1.AppDataSource.manager.findOne(Property_1.Property, { where: { id: propertyId } });
+        return database_1.AppDataSource.manager.findOne(Property_1.Property, {
+            where: { id: propertyId },
+            relations: ["agent"],
+        });
     });
 }
 function getProperties() {
     return __awaiter(this, void 0, void 0, function* () {
-        return database_1.AppDataSource.manager.find(Property_1.Property);
+        return database_1.AppDataSource.manager.find(Property_1.Property, {
+            relations: ["agent"],
+        });
     });
 }
 propertyRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
