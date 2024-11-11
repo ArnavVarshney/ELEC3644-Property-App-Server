@@ -75,12 +75,12 @@ wishlistRouter.get("/:userId", async (req, res) => {
     for(const row of result){
         let folderName = row.folderName
         let property = await getProperty(row.propertyId)
-        if(property===null){
+        if(property === null){
             continue
         }
+        property.id = property.id.toUpperCase()
         favorites[folderName].push(property)
     }
-
     res.json(favorites);
 });
 
