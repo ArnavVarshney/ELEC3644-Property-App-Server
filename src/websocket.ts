@@ -1,6 +1,6 @@
 import WebSocket from "ws";
 import { User } from "./entity/User";
-import { getUser } from "./routes/userRoutes";
+import { getUser, addWishlist, removeWishlist, getWishlists } from "./routes/userRoutes";
 import { createMessage, getMessages } from "./routes/messageRoutes";
 
 const clients = new Map<WebSocket, User>();

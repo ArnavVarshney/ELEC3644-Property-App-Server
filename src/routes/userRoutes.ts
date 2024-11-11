@@ -2,6 +2,8 @@ import { AppDataSource } from "../database";
 import express from "express";
 import { User } from "../entity/User";
 import { Like } from "typeorm";
+import { Wishlist } from "../entity/Wishlist";
+import { Property } from "../entity/Property";
 
 const userRouter = express.Router({ strict: true });
 
@@ -62,6 +64,39 @@ export async function getAgents() {
 
 export async function getUsers() {
   return AppDataSource.manager.find(User);
+}
+
+export async function addWishlist(
+  userId: string,
+  propertyId: string,
+  folderName: string,
+) {
+  const wishlist = new Wishlist();
+  const user = await AppDataSource.manager.findOneBy(User,  { id : userId })
+  const property = await AppDataSource.manager.findOneBy(Property, { id: propertyId })
+
+  wishlist.folderName = folderName
+  wishlist.user = user!
+  wishlist.property = property!
+
+  await AppDataSource.manager.save(wishlist);
+  return user;
+}
+
+export async function removeWishlist(
+  userId: string,
+  propertyId: string,
+  folderName: string,
+) {
+  const res = await AppDataSource.manager.delete(Wishlist, { user: userId, property: propertyId, folderName: folderName })
+  return res;
+}
+
+export async function getWishlists(
+  userId: string
+) {
+  const res = await AppDataSource.manager.query(`SELECT * FROM WISHLIST WHERE user='${userId}'`)
+  return res;
 }
 
 userRouter.get("/", async (req, res) => {
