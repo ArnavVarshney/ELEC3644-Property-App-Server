@@ -16,9 +16,15 @@ export class Wishlist {
   @Column()
   folderName: string;
 
+  @Column()
+  userId: string
+
   @ManyToOne(() => User)
   @JoinColumn({ name: "userId" })
   user: User;
+
+  @Column()
+  propertyId: string
 
   @ManyToOne(() => Property)
   @JoinColumn({ name: "propertyId" })

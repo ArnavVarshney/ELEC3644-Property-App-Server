@@ -66,39 +66,6 @@ export async function getUsers() {
   return AppDataSource.manager.find(User);
 }
 
-export async function addWishlist(
-  userId: string,
-  propertyId: string,
-  folderName: string,
-) {
-  let wishlist = new Wishlist();
-  const user = await AppDataSource.manager.findOneBy(User,  { id : userId })
-  const property = await AppDataSource.manager.findOneBy(Property, { id: propertyId })
-
-  wishlist.folderName = folderName
-  wishlist.user = user!
-  wishlist.property = property!
-
-  const res = await AppDataSource.manager.save(wishlist);
-  return res
-}
-
-export async function removeWishlist(
-  userId: string,
-  propertyId: string,
-  folderName: string,
-) {
-  const res = await AppDataSource.manager.delete(Wishlist, { user: userId, property: propertyId, folderName: folderName })
-  return res;
-}
-
-export async function getWishlists(
-  userId: string
-) {
-  const res = await AppDataSource.manager.createQueryBuilder().select("*").from(Wishlist, "W").where("W.user=:id", { id: userId }).getMany()
-  return res;
-}
-
 userRouter.get("/", async (req, res) => {
   res.json(await getUsers());
 });
