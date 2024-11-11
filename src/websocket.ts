@@ -141,8 +141,8 @@ export function handleWS(ws: WebSocket) {
           let wishlists = []
           for(let i=0; i<folderNames.length; ++i){
             const wishlist = {
-              "name": folderNames[0],
-              "properties": properties[0]
+              "name": folderNames[i],
+              "properties": properties[i]
             }
             wishlists.push(wishlist)
           }
