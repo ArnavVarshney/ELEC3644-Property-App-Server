@@ -17,6 +17,10 @@ let Wishlist = class Wishlist {
 };
 exports.Wishlist = Wishlist;
 __decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
+    __metadata("design:type", String)
+], Wishlist.prototype, "id", void 0);
+__decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Wishlist.prototype, "folderName", void 0);
