@@ -14,6 +14,9 @@ const typeorm_1 = require("typeorm");
 const Review_1 = require("./Review");
 const User_1 = require("./User");
 let Property = class Property {
+    constructor() {
+        this.timestamp = new Date();
+    }
     formatTransactionHistoryDates() {
         if (this.transactionHistory) {
             this.transactionHistory = this.transactionHistory.map((transaction) => (Object.assign(Object.assign({}, transaction), { date: new Date(transaction.date).toISOString() })));
@@ -112,6 +115,10 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], Property.prototype, "formatTransactionHistoryDates", null);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Property.prototype, "timestamp", void 0);
 exports.Property = Property = __decorate([
     (0, typeorm_1.Entity)()
 ], Property);

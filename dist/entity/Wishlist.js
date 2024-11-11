@@ -14,6 +14,9 @@ const typeorm_1 = require("typeorm");
 const User_1 = require("./User");
 const Property_1 = require("./Property");
 let Wishlist = class Wishlist {
+    constructor() {
+        this.timestamp = new Date();
+    }
 };
 exports.Wishlist = Wishlist;
 __decorate([
@@ -42,6 +45,10 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: "propertyId" }),
     __metadata("design:type", Property_1.Property)
 ], Wishlist.prototype, "property", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Wishlist.prototype, "timestamp", void 0);
 exports.Wishlist = Wishlist = __decorate([
     (0, typeorm_1.Entity)()
 ], Wishlist);

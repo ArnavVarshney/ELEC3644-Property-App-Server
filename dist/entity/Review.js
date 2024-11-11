@@ -14,6 +14,9 @@ const typeorm_1 = require("typeorm");
 const User_1 = require("./User");
 const Property_1 = require("./Property");
 let Review = class Review {
+    constructor() {
+        this.timestamp = new Date();
+    }
 };
 exports.Review = Review;
 __decorate([
@@ -40,6 +43,10 @@ __decorate([
     (0, typeorm_1.ManyToOne)(() => User_1.User, (user) => user.reviews),
     __metadata("design:type", User_1.User)
 ], Review.prototype, "reviewedUser", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Review.prototype, "timestamp", void 0);
 exports.Review = Review = __decorate([
     (0, typeorm_1.Entity)()
 ], Review);
