@@ -1,6 +1,7 @@
 import { AppDataSource } from "../database";
 import express from "express";
 import { Property } from "../entity/Property";
+import { Review } from "../entity/Review";
 
 const propertyRouter = express.Router({ strict: true });
 
@@ -103,11 +104,16 @@ export async function updateProperty(
 }
 
 export async function getProperty(propertyId: string) {
-  return AppDataSource.manager.findOne(Property, { where: { id: propertyId } });
+  return AppDataSource.manager.findOne(Property, {
+    where: { id: propertyId },
+    relations: ["agent"],
+  });
 }
 
 export async function getProperties() {
-  return AppDataSource.manager.find(Property);
+  return AppDataSource.manager.find(Property, {
+    relations: ["agent"],
+  });
 }
 
 propertyRouter.get("/", async (req, res) => {
