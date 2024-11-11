@@ -18,12 +18,13 @@ const Group_1 = require("./entity/Group");
 const Review_1 = require("./entity/Review");
 const typeorm_1 = require("typeorm");
 const Property_1 = require("./entity/Property");
+const Wishlist_1 = require("./entity/Wishlist");
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "sqlite",
     database: "./chat.db",
     synchronize: true,
     logging: false,
-    entities: [User_1.User, Message_1.Message, Group_1.Group, Review_1.Review, Property_1.Property],
+    entities: [User_1.User, Message_1.Message, Group_1.Group, Review_1.Review, Property_1.Property, Wishlist_1.Wishlist],
 });
 function initDatabase() {
     return __awaiter(this, void 0, void 0, function* () {
