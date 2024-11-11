@@ -91,7 +91,7 @@ wishlistRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
     if (wishlist)
         res.json(wishlist);
     else
-        res.status(500).send("Something bad happened or either user or property doesn't exist, or both");
+        res.status(500).send({ "message": "Something bad happened. Either no property or no user, or both" });
 }));
 wishlistRouter.delete("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId, propertyId, folderName } = req.body;
@@ -99,6 +99,6 @@ wishlistRouter.delete("/", (req, res) => __awaiter(void 0, void 0, void 0, funct
     if (wishlist)
         res.json(wishlist);
     else
-        res.status(500).send("Something bad happened");
+        res.status(500).send({ "message": "Something bad happened" });
 }));
 exports.default = wishlistRouter;
