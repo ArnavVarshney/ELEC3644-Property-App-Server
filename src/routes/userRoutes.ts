@@ -12,6 +12,7 @@ export async function createUser(
   email: string,
   password: string,
   avatarUrl?: string,
+  phone?: string,
 ) {
   if (await AppDataSource.manager.findOne(User, { where: { email: email } }))
     return;
@@ -20,6 +21,7 @@ export async function createUser(
   user.email = email;
   user.password = password;
   user.avatarUrl = avatarUrl ?? "";
+  user.phone = phone ?? "";
   await AppDataSource.manager.save(user);
   return user;
 }
@@ -28,6 +30,7 @@ export async function updateUser(
   userId: string,
   name?: string,
   avatarUrl?: string,
+  phone?: string,
 ) {
   const user = await AppDataSource.manager.findOne(User, {
     where: { id: userId },
@@ -35,6 +38,7 @@ export async function updateUser(
   if (user) {
     user.name = name ?? user.name;
     user.avatarUrl = avatarUrl ?? user.avatarUrl;
+    user.phone = phone ?? user.phone;
     await AppDataSource.manager.save(user);
     return user;
   }
@@ -53,13 +57,13 @@ export async function getAgents() {
       "user.id",
       "user.name",
       "user.email",
+      "user.phone",
       "user.avatarUrl",
       "user.createdAt",
       "property.id",
       "property.name",
     ])
     .getMany();
-
 }
 
 export async function getUsers() {
