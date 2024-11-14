@@ -21,7 +21,7 @@ const database_1 = require("../database");
 const express_1 = __importDefault(require("express"));
 const User_1 = require("../entity/User");
 const userRouter = express_1.default.Router({ strict: true });
-function createUser(name, email, password, avatarUrl) {
+function createUser(name, email, password, avatarUrl, phone) {
     return __awaiter(this, void 0, void 0, function* () {
         if (yield database_1.AppDataSource.manager.findOne(User_1.User, { where: { email: email } }))
             return;
@@ -30,11 +30,12 @@ function createUser(name, email, password, avatarUrl) {
         user.email = email;
         user.password = password;
         user.avatarUrl = avatarUrl !== null && avatarUrl !== void 0 ? avatarUrl : "";
+        user.phone = phone !== null && phone !== void 0 ? phone : "";
         yield database_1.AppDataSource.manager.save(user);
         return user;
     });
 }
-function updateUser(userId, name, avatarUrl) {
+function updateUser(userId, name, avatarUrl, phone) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = yield database_1.AppDataSource.manager.findOne(User_1.User, {
             where: { id: userId },
@@ -42,6 +43,7 @@ function updateUser(userId, name, avatarUrl) {
         if (user) {
             user.name = name !== null && name !== void 0 ? name : user.name;
             user.avatarUrl = avatarUrl !== null && avatarUrl !== void 0 ? avatarUrl : user.avatarUrl;
+            user.phone = phone !== null && phone !== void 0 ? phone : user.phone;
             yield database_1.AppDataSource.manager.save(user);
             return user;
         }
@@ -62,6 +64,7 @@ function getAgents() {
             "user.id",
             "user.name",
             "user.email",
+            "user.phone",
             "user.avatarUrl",
             "user.createdAt",
             "property.id",
