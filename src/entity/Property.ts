@@ -80,6 +80,15 @@ export class Property {
   @Column()
   agentId: string;
 
+  @Column({ nullable: true })
+  propertyType: string;
+
+  @Column({ nullable: true, type: 'simple-json' })
+  amenities: string[];
+
+  @Column({ nullable: true })
+  contractType: string;
+
   @ManyToOne(() => User)
   @JoinColumn({ name: "agentId" })
   agent: User;
