@@ -20,62 +20,24 @@ const database_1 = require("../database");
 const express_1 = __importDefault(require("express"));
 const Property_1 = require("../entity/Property");
 const propertyRouter = express_1.default.Router({ strict: true });
-function createProperty(name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, transactionHistory, agentId) {
+function createProperty(data) {
     return __awaiter(this, void 0, void 0, function* () {
-        const property = new Property_1.Property();
-        property.name = name;
-        property.address = address;
-        property.area = area;
-        property.district = district;
-        property.subDistrict = subDistrict;
-        property.facilities = facilities;
-        property.schoolNet = schoolNet;
-        property.saleableArea = saleableArea;
-        property.saleableAreaPricePerSquareFoot = saleableAreaPricePerSquareFoot;
-        property.grossFloorArea = grossFloorArea;
-        property.grossFloorAreaPricePerSquareFoot = grossFloorAreaPricePerSquareFoot;
-        property.netPrice = netPrice;
-        property.buildingAge = buildingAge;
-        property.buildingDirection = buildingDirection;
-        property.estate = estate;
-        property.imageUrls = imageUrls !== null && imageUrls !== void 0 ? imageUrls : [];
-        property.transactionHistory = transactionHistory !== null && transactionHistory !== void 0 ? transactionHistory : [];
-        property.agentId = agentId !== null && agentId !== void 0 ? agentId : "";
+        const property = database_1.AppDataSource.manager.create(Property_1.Property, data);
         yield database_1.AppDataSource.manager.save(property);
         return property;
     });
 }
-function updateProperty(propertyId, name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, transactionHistory, agentId) {
+function updateProperty(propertyId, data) {
     return __awaiter(this, void 0, void 0, function* () {
         const property = yield database_1.AppDataSource.manager.findOne(Property_1.Property, {
             where: { id: propertyId },
         });
         if (property) {
-            property.name = name !== null && name !== void 0 ? name : property.name;
-            property.address = address !== null && address !== void 0 ? address : property.address;
-            property.area = area !== null && area !== void 0 ? area : property.area;
-            property.district = district !== null && district !== void 0 ? district : property.district;
-            property.subDistrict = subDistrict !== null && subDistrict !== void 0 ? subDistrict : property.subDistrict;
-            property.facilities = facilities !== null && facilities !== void 0 ? facilities : property.facilities;
-            property.schoolNet = schoolNet !== null && schoolNet !== void 0 ? schoolNet : property.schoolNet;
-            property.saleableArea = saleableArea !== null && saleableArea !== void 0 ? saleableArea : property.saleableArea;
-            property.saleableAreaPricePerSquareFoot =
-                saleableAreaPricePerSquareFoot !== null && saleableAreaPricePerSquareFoot !== void 0 ? saleableAreaPricePerSquareFoot : property.saleableAreaPricePerSquareFoot;
-            property.grossFloorArea = grossFloorArea !== null && grossFloorArea !== void 0 ? grossFloorArea : property.grossFloorArea;
-            property.grossFloorAreaPricePerSquareFoot =
-                grossFloorAreaPricePerSquareFoot !== null && grossFloorAreaPricePerSquareFoot !== void 0 ? grossFloorAreaPricePerSquareFoot : property.grossFloorAreaPricePerSquareFoot;
-            property.netPrice = netPrice !== null && netPrice !== void 0 ? netPrice : property.netPrice;
-            property.buildingAge = buildingAge !== null && buildingAge !== void 0 ? buildingAge : property.buildingAge;
-            property.buildingDirection =
-                buildingDirection !== null && buildingDirection !== void 0 ? buildingDirection : property.buildingDirection;
-            property.estate = estate !== null && estate !== void 0 ? estate : property.estate;
-            property.imageUrls = imageUrls !== null && imageUrls !== void 0 ? imageUrls : property.imageUrls;
-            property.transactionHistory =
-                transactionHistory !== null && transactionHistory !== void 0 ? transactionHistory : property.transactionHistory;
-            property.agentId = agentId !== null && agentId !== void 0 ? agentId : property.agentId;
+            Object.assign(property, data);
             yield database_1.AppDataSource.manager.save(property);
             return property;
         }
+        return null;
     });
 }
 function getProperty(propertyId) {
@@ -88,47 +50,39 @@ function getProperty(propertyId) {
 }
 function getProperties() {
     return __awaiter(this, void 0, void 0, function* () {
-        return database_1.AppDataSource.manager.find(Property_1.Property, {
-            relations: ["agent"],
-        });
+        return database_1.AppDataSource.manager.find(Property_1.Property, { relations: ["agent"] });
     });
 }
 propertyRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.json(yield getProperties());
+    const properties = yield getProperties();
+    res.json(properties);
 }));
 propertyRouter.get("/:propertyId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const propertyId = req.params.propertyId;
-    const property = yield getProperty(propertyId);
+    const property = yield getProperty(req.params.propertyId);
     if (property)
         res.json(property);
     else
         res.status(404).send("Property not found");
 }));
 propertyRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, transactionHistory, agentId, } = req.body;
-    if (!name ||
-        !address ||
-        !area ||
-        !district ||
-        !subDistrict ||
-        !saleableArea ||
-        !saleableAreaPricePerSquareFoot ||
-        !grossFloorArea ||
-        !grossFloorAreaPricePerSquareFoot ||
-        !netPrice ||
-        !buildingAge ||
-        !buildingDirection ||
-        !estate) {
-        res.status(400).send("All fields are required");
-        return;
+    const requiredFields = [
+        "name", "address", "area", "district", "subDistrict", "saleableArea",
+        "saleableAreaPricePerSquareFoot", "grossFloorArea",
+        "grossFloorAreaPricePerSquareFoot", "netPrice", "buildingAge",
+        "buildingDirection", "estate", "agentId", "propertyType", "amenities",
+        "contractType"
+    ];
+    for (const field of requiredFields) {
+        if (!req.body[field]) {
+            res.status(400).send(`${field} is required`);
+            return;
+        }
     }
-    const property = yield createProperty(name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, transactionHistory, agentId);
+    const property = yield createProperty(req.body);
     res.json(property);
 }));
 propertyRouter.patch("/:propertyId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const propertyId = req.params.propertyId;
-    const { name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, transactionHistory, agentId, } = req.body;
-    const property = yield updateProperty(propertyId, name, address, area, district, subDistrict, facilities, schoolNet, saleableArea, saleableAreaPricePerSquareFoot, grossFloorArea, grossFloorAreaPricePerSquareFoot, netPrice, buildingAge, buildingDirection, estate, imageUrls, transactionHistory, agentId);
+    const property = yield updateProperty(req.params.propertyId, req.body);
     if (property)
         res.json(property);
     else

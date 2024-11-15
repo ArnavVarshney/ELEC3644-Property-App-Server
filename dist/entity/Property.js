@@ -105,6 +105,18 @@ __decorate([
     __metadata("design:type", String)
 ], Property.prototype, "agentId", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Property.prototype, "propertyType", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true, type: 'simple-json' }),
+    __metadata("design:type", Array)
+], Property.prototype, "amenities", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Property.prototype, "contractType", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)(() => User_1.User),
     (0, typeorm_1.JoinColumn)({ name: "agentId" }),
     __metadata("design:type", User_1.User)
