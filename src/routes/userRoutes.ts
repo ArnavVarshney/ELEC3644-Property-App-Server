@@ -40,13 +40,9 @@ export async function updateUser(
     user.avatarUrl = avatarUrl ?? user.avatarUrl;
     user.phone = phone ?? user.phone;
     user.isActive = isActive ?? user.isActive;
-    if (
-      oldPassword &&
-      newPassword &&
-      (await user.comparePassword(oldPassword))
-    ) {
-      user.password = newPassword;
-    } else return null;
+    if (oldPassword && newPassword)
+      if (await user.comparePassword(oldPassword)) user.password = newPassword;
+      else return null;
     await AppDataSource.manager.save(user);
     return user;
   }
