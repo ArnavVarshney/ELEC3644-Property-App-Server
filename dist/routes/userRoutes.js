@@ -45,13 +45,11 @@ function updateUser(userId, name, avatarUrl, phone, isActive, oldPassword, newPa
             user.avatarUrl = avatarUrl !== null && avatarUrl !== void 0 ? avatarUrl : user.avatarUrl;
             user.phone = phone !== null && phone !== void 0 ? phone : user.phone;
             user.isActive = isActive !== null && isActive !== void 0 ? isActive : user.isActive;
-            if (oldPassword &&
-                newPassword &&
-                (yield user.comparePassword(oldPassword))) {
-                user.password = newPassword;
-            }
-            else
-                return null;
+            if (oldPassword && newPassword)
+                if (yield user.comparePassword(oldPassword))
+                    user.password = newPassword;
+                else
+                    return null;
             yield database_1.AppDataSource.manager.save(user);
             return user;
         }
