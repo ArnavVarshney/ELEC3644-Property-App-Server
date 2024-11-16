@@ -1,9 +1,6 @@
 import { AppDataSource } from "../database";
 import express from "express";
 import { User } from "../entity/User";
-import { Like } from "typeorm";
-import { Wishlist } from "../entity/Wishlist";
-import { Property } from "../entity/Property";
 
 const userRouter = express.Router({ strict: true });
 
@@ -31,6 +28,9 @@ export async function updateUser(
   name?: string,
   avatarUrl?: string,
   phone?: string,
+  isActive?: boolean,
+  oldPassword?: string,
+  newPassword?: string,
 ) {
   const user = await AppDataSource.manager.findOne(User, {
     where: { id: userId },
@@ -39,6 +39,14 @@ export async function updateUser(
     user.name = name ?? user.name;
     user.avatarUrl = avatarUrl ?? user.avatarUrl;
     user.phone = phone ?? user.phone;
+    user.isActive = isActive ?? user.isActive;
+    if (
+      oldPassword &&
+      newPassword &&
+      (await user.comparePassword(oldPassword))
+    ) {
+      user.password = newPassword;
+    } else return null;
     await AppDataSource.manager.save(user);
     return user;
   }
@@ -102,7 +110,7 @@ userRouter.post("/", async (req, res) => {
 userRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const user = await AppDataSource.manager.findOne(User, {
-    where: { email: email },
+    where: { email: email, isActive: true },
   });
   if (await user?.comparePassword(password)) res.json(user);
   else res.status(404).send("User not found");
