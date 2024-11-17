@@ -47,6 +47,7 @@ const messageRoutes_1 = __importDefault(require("./routes/messageRoutes"));
 const reviewRoutes_1 = __importDefault(require("./routes/reviewRoutes"));
 const propertyRoutes_1 = __importDefault(require("./routes/propertyRoutes"));
 const wishlistRoutes_1 = __importDefault(require("./routes/wishlistRoutes"));
+const imageRoutes_1 = __importDefault(require("./routes/imageRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -83,6 +84,7 @@ app.use("/reviews", reviewRoutes_1.default);
 app.use("/properties", propertyRoutes_1.default);
 app.use("/wishlists", wishlistRoutes_1.default);
 app.use("/images", express_1.default.static("images", { maxAge: "1h" }));
+app.use("/upload", imageRoutes_1.default);
 server.listen(port, () => {
     console.log(`Server running at port http://localhost:${port}`);
 });
