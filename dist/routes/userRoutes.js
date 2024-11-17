@@ -35,7 +35,7 @@ function createUser(name, email, password, avatarUrl, phone) {
         return user;
     });
 }
-function updateUser(userId, name, avatarUrl, phone) {
+function updateUser(userId, name, avatarUrl, phone, isActive, oldPassword, newPassword) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = yield database_1.AppDataSource.manager.findOne(User_1.User, {
             where: { id: userId },
@@ -44,6 +44,12 @@ function updateUser(userId, name, avatarUrl, phone) {
             user.name = name !== null && name !== void 0 ? name : user.name;
             user.avatarUrl = avatarUrl !== null && avatarUrl !== void 0 ? avatarUrl : user.avatarUrl;
             user.phone = phone !== null && phone !== void 0 ? phone : user.phone;
+            user.isActive = isActive !== null && isActive !== void 0 ? isActive : user.isActive;
+            if (oldPassword && newPassword)
+                if (yield user.comparePassword(oldPassword))
+                    user.password = newPassword;
+                else
+                    return null;
             yield database_1.AppDataSource.manager.save(user);
             return user;
         }
@@ -109,7 +115,7 @@ userRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* (
 userRouter.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     const user = yield database_1.AppDataSource.manager.findOne(User_1.User, {
-        where: { email: email },
+        where: { email: email, isActive: true },
     });
     if (yield (user === null || user === void 0 ? void 0 : user.comparePassword(password)))
         res.json(user);

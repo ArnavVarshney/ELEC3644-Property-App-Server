@@ -10,7 +10,8 @@ import userRouter from "./routes/userRoutes";
 import messageRouter from "./routes/messageRoutes";
 import reviewRouter from "./routes/reviewRoutes";
 import propertyRouter from "./routes/propertyRoutes";
-import wishlistRouter from "./routes/wishlistRoutes"
+import wishlistRouter from "./routes/wishlistRoutes";
+import imageRouter from "./routes/imageRoutes";
 
 dotenv.config();
 
@@ -51,8 +52,9 @@ app.use("/users", userRouter);
 app.use("/messages", messageRouter);
 app.use("/reviews", reviewRouter);
 app.use("/properties", propertyRouter);
-app.use("/wishlists", wishlistRouter)
+app.use("/wishlists", wishlistRouter);
 app.use("/images", express.static("images", { maxAge: "1h" }));
+app.use("/upload", imageRouter);
 
 server.listen(port, () => {
   console.log(`Server running at port http://localhost:${port}`);
