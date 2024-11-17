@@ -13,10 +13,10 @@ export async function addWishlist(
     userId: string,
     propertyId: string,
     folderName: string,
-  ) {
+) {
     const user = await getUser(userId)
     const property = await getProperty(propertyId)
-    if(user===null || property===null){
+    if (user === null || property === null) {
         return null
     }
 
@@ -27,20 +27,20 @@ export async function addWishlist(
     const res = await AppDataSource.manager.save(wishlist);
     return res
 }
-  
-  export async function removeWishlist(
+
+export async function removeWishlist(
     userId: string,
     propertyId: string,
     folderName: string,
-  ) {
+) {
     const res = await AppDataSource.manager.delete(Wishlist, { userId: userId, propertyId: propertyId, folderName: folderName })
     return res;
 }
-  
+
 export async function getWishlists(
     userId: string
 ) {
-    const res = await AppDataSource.manager.find(Wishlist, { where:{ userId: userId } })
+    const res = await AppDataSource.manager.find(Wishlist, { where: { userId: userId } })
     return res;
 }
 
@@ -66,16 +66,16 @@ wishlistRouter.get("/:userId", async (req, res) => {
     const folderNames = await getWishlistsFolderName(userId)
 
     //Initialisation
-    let favorites: { [name: string]: [Property?]} = {}
-    for(const w of folderNames){
+    let favorites: { [name: string]: [Property?] } = {}
+    for (const w of folderNames) {
         let name = w.folderName
         favorites[name] = []
     }
 
-    for(const row of result){
+    for (const row of result) {
         let folderName = row.folderName
         let property = await getProperty(row.propertyId)
-        if(property === null){
+        if (property === null) {
             continue
         }
         property.id = property.id.toUpperCase()
@@ -89,7 +89,7 @@ wishlistRouter.post("/", async (req, res) => {
     const wishlist = await addWishlist(userId, propertyId, folderName);
 
     if (wishlist) res.json(wishlist);
-    else res.status(500).send({"message": "Something bad happened. Either no property or no user, or both"});
+    else res.status(500).send({ "message": "Something bad happened. Either no property or no user, or both" });
 });
 
 wishlistRouter.delete("/", async (req, res) => {
@@ -97,7 +97,7 @@ wishlistRouter.delete("/", async (req, res) => {
     const wishlist = await removeWishlist(userId, propertyId, folderName);
 
     if (wishlist) res.json(wishlist);
-    else res.status(500).send({"message": "Something bad happened"});
+    else res.status(500).send({ "message": "Something bad happened" });
 });
 
 export default wishlistRouter

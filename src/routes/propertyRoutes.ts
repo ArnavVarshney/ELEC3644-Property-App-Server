@@ -91,6 +91,85 @@ propertyRouter.post("/", async (req, res) => {
   res.json(property);
 });
 
+propertyRouter.post("/query", async (req, res) => {
+  try {
+    const query = req.body;
+    let queryBuilder = AppDataSource.manager.createQueryBuilder(Property, "property");
+
+    if (query.name) {
+      queryBuilder.andWhere("property.name LIKE :name", { name: `%${query.name}%` });
+    }
+    if (query.address) {
+      queryBuilder.andWhere("property.address LIKE :address", { address: `%${query.address}%` });
+    }
+    if (query.area) {
+      queryBuilder.andWhere("property.area LIKE :area", { area: `%${query.area}%` });
+    }
+    if (query.district) {
+      queryBuilder.andWhere("property.district LIKE :district", { district: `%${query.district}%` });
+    }
+    if (query.subDistrict) {
+      queryBuilder.andWhere("property.subDistrict LIKE :subDistrict", { subDistrict: `%${query.subDistrict}%` });
+    }
+    if (query.estate) {
+      queryBuilder.andWhere("property.estate LIKE :estate", { estate: `%${query.estate}%` });
+    }
+    if (query.propertyType) {
+      queryBuilder.andWhere("property.propertyType LIKE :propertyType", { propertyType: `%${query.propertyType}%` });
+    }
+    if (query.contractType) {
+      queryBuilder.andWhere("property.contractType LIKE :contractType", { contractType: `%${query.contractType}%` });
+    }
+
+    if (query.saleableArea) {
+      const { min, max } = query.saleableArea;
+      if (min !== undefined && max !== undefined) {
+        queryBuilder.andWhere("property.saleableArea BETWEEN :minArea AND :maxArea", { minArea: min, maxArea: max });
+      } else if (min !== undefined) {
+        queryBuilder.andWhere("property.saleableArea >= :minArea", { minArea: min });
+      } else if (max !== undefined) {
+        queryBuilder.andWhere("property.saleableArea <= :maxArea", { maxArea: max });
+      }
+    }
+
+    if (query.netPrice) {
+      const { min, max } = query.netPrice;
+      if (min !== undefined && max !== undefined) {
+        queryBuilder.andWhere("property.netPrice BETWEEN :minPrice AND :maxPrice", { minPrice: min, maxPrice: max });
+      } else if (min !== undefined) {
+        queryBuilder.andWhere("property.netPrice >= :minPrice", { minPrice: min });
+      } else if (max !== undefined) {
+        queryBuilder.andWhere("property.netPrice <= :maxPrice", { maxPrice: max });
+      }
+    }
+
+    if (query.buildingAge) {
+      const { min, max } = query.buildingAge;
+      if (min !== undefined && max !== undefined) {
+        queryBuilder.andWhere("property.buildingAge BETWEEN :minAge AND :maxAge", { minAge: min, maxAge: max });
+      } else if (min !== undefined) {
+        queryBuilder.andWhere("property.buildingAge >= :minAge", { minAge: min });
+      } else if (max !== undefined) {
+        queryBuilder.andWhere("property.buildingAge <= :maxAge", { maxAge: max });
+      }
+    }
+
+    if (query.amenities && Array.isArray(query.amenities) && query.amenities.length > 0) {
+      query.amenities.map((amenity: string, index: number) => {
+        const param = `amenity${index}`;
+        queryBuilder.andWhere(`property.amenities LIKE :${param}`, { [param]: `%${amenity}%` });
+      });
+    }
+
+    const properties = await queryBuilder.getMany();
+
+    res.json(properties);
+  } catch (error) {
+    console.error("Error in property query:", error);
+    res.status(500).send("An error occurred while querying properties");
+  }
+});
+
 propertyRouter.patch("/:propertyId", async (req, res) => {
   const property = await updateProperty(req.params.propertyId, req.body);
   if (property) res.json(property);
