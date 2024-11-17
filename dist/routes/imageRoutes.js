@@ -20,6 +20,7 @@ imageRouter.post("/", upload.single("file"), (req, res) => {
         res.status(400).send("No file uploaded");
         return;
     }
-    res.json({ filePath: `/images/${req.file.filename}` });
+    const fullUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+    res.json({ url: fullUrl });
 });
 exports.default = imageRouter;
