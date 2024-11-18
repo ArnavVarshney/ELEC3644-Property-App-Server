@@ -28,7 +28,7 @@ export async function updateUser(
   name?: string,
   avatarUrl?: string,
   phone?: string,
-  isActive?: boolean,
+  isActive?: string,
   oldPassword?: string,
   newPassword?: string,
 ) {
@@ -39,7 +39,7 @@ export async function updateUser(
     user.name = name ?? user.name;
     user.avatarUrl = avatarUrl ?? user.avatarUrl;
     user.phone = phone ?? user.phone;
-    user.isActive = isActive ?? user.isActive;
+    if (isActive) user.isActive = isActive != "false";
     if (oldPassword && newPassword)
       if (await user.comparePassword(oldPassword)) user.password = newPassword;
       else return null;
