@@ -20,6 +20,7 @@ exports.getUsers = getUsers;
 const database_1 = require("../database");
 const express_1 = __importDefault(require("express"));
 const User_1 = require("../entity/User");
+const bcrypt_1 = require("bcrypt");
 const userRouter = express_1.default.Router({ strict: true });
 function createUser(name, email, password, avatarUrl, phone) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -48,7 +49,7 @@ function updateUser(userId, name, avatarUrl, phone, isActive, oldPassword, newPa
                 user.isActive = isActive != "false";
             if (oldPassword && newPassword)
                 if (yield user.comparePassword(oldPassword))
-                    user.password = newPassword;
+                    user.password = yield (0, bcrypt_1.hash)(newPassword, 10);
                 else
                     return null;
             yield database_1.AppDataSource.manager.save(user);
@@ -125,8 +126,8 @@ userRouter.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, functi
 }));
 userRouter.patch("/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.params.userId;
-    const { name, avatarUrl } = req.body;
-    const user = yield updateUser(userId, name, avatarUrl);
+    const { name, avatarUrl, isActive, phone, oldPassword, newPassword } = req.body;
+    const user = yield updateUser(userId, name, avatarUrl, phone, isActive, oldPassword, newPassword);
     if (user)
         res.json(user);
     else
