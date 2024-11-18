@@ -94,7 +94,8 @@ propertyRouter.post("/", async (req, res) => {
 propertyRouter.post("/query", async (req, res) => {
   try {
     const query = req.body;
-    let queryBuilder = AppDataSource.manager.createQueryBuilder(Property, "property");
+    let queryBuilder = AppDataSource.manager.createQueryBuilder(Property, "property").leftJoinAndSelect("property.agent", "agent");
+
 
     if (query.name) {
       queryBuilder.andWhere("property.name LIKE :name", { name: `%${query.name}%` });
