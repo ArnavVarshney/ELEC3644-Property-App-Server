@@ -44,7 +44,8 @@ function updateUser(userId, name, avatarUrl, phone, isActive, oldPassword, newPa
             user.name = name !== null && name !== void 0 ? name : user.name;
             user.avatarUrl = avatarUrl !== null && avatarUrl !== void 0 ? avatarUrl : user.avatarUrl;
             user.phone = phone !== null && phone !== void 0 ? phone : user.phone;
-            user.isActive = isActive !== null && isActive !== void 0 ? isActive : user.isActive;
+            if (isActive)
+                user.isActive = isActive != "false";
             if (oldPassword && newPassword)
                 if (yield user.comparePassword(oldPassword))
                     user.password = newPassword;
