@@ -116,7 +116,9 @@ propertyRouter.post("/query", async (req, res) => {
       queryBuilder.andWhere("property.estate LIKE :estate", { estate: `%${query.estate}%` });
     }
     if (query.propertyType) {
-      queryBuilder.andWhere("property.propertyType LIKE :propertyType", { propertyType: `%${query.propertyType}%` });
+      if (query.propertyType !== "any") {
+        queryBuilder.andWhere("property.propertyType LIKE :propertyType", { propertyType: `%${query.propertyType}%` });
+      }
     }
     if (query.contractType) {
       queryBuilder.andWhere("property.contractType LIKE :contractType", { contractType: `%${query.contractType}%` });
