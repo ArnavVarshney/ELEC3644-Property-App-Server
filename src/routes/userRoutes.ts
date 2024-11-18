@@ -1,6 +1,7 @@
 import { AppDataSource } from "../database";
 import express from "express";
 import { User } from "../entity/User";
+import { hash } from "bcrypt";
 
 const userRouter = express.Router({ strict: true });
 
@@ -41,7 +42,8 @@ export async function updateUser(
     user.phone = phone ?? user.phone;
     if (isActive) user.isActive = isActive != "false";
     if (oldPassword && newPassword)
-      if (await user.comparePassword(oldPassword)) user.password = newPassword;
+      if (await user.comparePassword(oldPassword))
+        user.password = await hash(newPassword, 10);
       else return null;
     await AppDataSource.manager.save(user);
     return user;
@@ -114,8 +116,17 @@ userRouter.post("/login", async (req, res) => {
 
 userRouter.patch("/:userId", async (req, res) => {
   const userId = req.params.userId;
-  const { name, avatarUrl } = req.body;
-  const user = await updateUser(userId, name, avatarUrl);
+  const { name, avatarUrl, isActive, phone, oldPassword, newPassword } =
+    req.body;
+  const user = await updateUser(
+    userId,
+    name,
+    avatarUrl,
+    phone,
+    isActive,
+    oldPassword,
+    newPassword,
+  );
   if (user) res.json(user);
   else res.status(404).send("User not found");
 });
