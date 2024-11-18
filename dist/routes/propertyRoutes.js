@@ -84,7 +84,7 @@ propertyRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
 propertyRouter.post("/query", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const query = req.body;
-        let queryBuilder = database_1.AppDataSource.manager.createQueryBuilder(Property_1.Property, "property");
+        let queryBuilder = database_1.AppDataSource.manager.createQueryBuilder(Property_1.Property, "property").leftJoinAndSelect("property.agent", "agent");
         if (query.name) {
             queryBuilder.andWhere("property.name LIKE :name", { name: `%${query.name}%` });
         }
@@ -104,7 +104,9 @@ propertyRouter.post("/query", (req, res) => __awaiter(void 0, void 0, void 0, fu
             queryBuilder.andWhere("property.estate LIKE :estate", { estate: `%${query.estate}%` });
         }
         if (query.propertyType) {
-            queryBuilder.andWhere("property.propertyType LIKE :propertyType", { propertyType: `%${query.propertyType}%` });
+            if (query.propertyType !== "any") {
+                queryBuilder.andWhere("property.propertyType LIKE :propertyType", { propertyType: `%${query.propertyType}%` });
+            }
         }
         if (query.contractType) {
             queryBuilder.andWhere("property.contractType LIKE :contractType", { contractType: `%${query.contractType}%` });
