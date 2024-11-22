@@ -14,7 +14,6 @@ exports.initDatabase = initDatabase;
 require("reflect-metadata");
 const User_1 = require("./entity/User");
 const Message_1 = require("./entity/Message");
-const Group_1 = require("./entity/Group");
 const Review_1 = require("./entity/Review");
 const typeorm_1 = require("typeorm");
 const Property_1 = require("./entity/Property");
@@ -24,7 +23,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
     database: "./chat.db",
     synchronize: true,
     logging: false,
-    entities: [User_1.User, Message_1.Message, Group_1.Group, Review_1.Review, Property_1.Property, Wishlist_1.Wishlist],
+    entities: [User_1.User, Message_1.Message, Review_1.Review, Property_1.Property, Wishlist_1.Wishlist],
 });
 function initDatabase() {
     return __awaiter(this, void 0, void 0, function* () {
