@@ -100,20 +100,14 @@ userRouter.get("/:userId", (req, res) => __awaiter(void 0, void 0, void 0, funct
     else
         res.status(404).send("User not found");
 }));
-userRouter.get("/exists/:email", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const email = req.params.email;
-    const user = yield database_1.AppDataSource.manager.findOne(User_1.User, {
-        where: { email: email },
-    });
-    if (user)
-        res.json({ exists: true });
-    else
-        res.json({ exists: false });
-}));
 userRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, phone, password, avatarUrl } = req.body;
     if (!name || !email || !password) {
         res.status(400).send("Name, email, and password are required");
+        return;
+    }
+    if (yield database_1.AppDataSource.manager.findOne(User_1.User, { where: { email: email } })) {
+        res.status(400).send("Email already in use");
         return;
     }
     const user = yield createUser(name, email, password, avatarUrl, phone);
