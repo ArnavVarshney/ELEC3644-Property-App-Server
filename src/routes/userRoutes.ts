@@ -91,21 +91,18 @@ userRouter.get("/:userId", async (req, res) => {
   else res.status(404).send("User not found");
 });
 
-userRouter.get("/exists/:email", async (req, res) => {
-  const email = req.params.email;
-  const user = await AppDataSource.manager.findOne(User, {
-    where: { email: email },
-  });
-  if (user) res.json({ exists: true });
-  else res.json({ exists: false });
-});
-
 userRouter.post("/", async (req, res) => {
   const { name, email, phone, password, avatarUrl } = req.body;
   if (!name || !email || !password) {
     res.status(400).send("Name, email, and password are required");
     return;
   }
+
+  if (await AppDataSource.manager.findOne(User, { where: { email: email } })) {
+    res.status(400).send("Email already in use");
+    return;
+  }
+
   const user = await createUser(name, email, password, avatarUrl, phone);
   if (!user) res.status(400).send("User creation failed");
   else {
