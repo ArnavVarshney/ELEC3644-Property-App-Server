@@ -20,7 +20,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
-const Group_1 = require("./Group");
 const Review_1 = require("./Review");
 const bcrypt_1 = require("bcrypt");
 const Property_1 = require("./Property");
@@ -76,11 +75,6 @@ __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], User.prototype, "createdAt", void 0);
-__decorate([
-    (0, typeorm_1.ManyToMany)(() => Group_1.Group, (group) => group.users),
-    (0, typeorm_1.JoinTable)(),
-    __metadata("design:type", Array)
-], User.prototype, "groups", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => Review_1.Review, (review) => review.reviewedUser),
     __metadata("design:type", Array)
