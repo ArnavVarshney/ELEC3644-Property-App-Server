@@ -9,7 +9,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Group } from "./Group";
 import { Review } from "./Review";
 import { compare, hash } from "bcrypt";
 import { Property } from "./Property";
@@ -39,10 +38,6 @@ export class User {
 
   @CreateDateColumn()
   createdAt: Date = new Date();
-
-  @ManyToMany(() => Group, (group) => group.users)
-  @JoinTable()
-  groups: Group[];
 
   @OneToMany(() => Review, (review) => review.reviewedUser)
   reviews: Review[];
