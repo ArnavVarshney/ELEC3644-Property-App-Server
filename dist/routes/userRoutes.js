@@ -152,9 +152,9 @@ userRouter.patch("/:userId", (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.status(404).send("User not found");
 }));
 const transporter = nodemailer_1.default.createTransport({
-    service: "smtp.zoho.com",
-    port: 465,
-    secure: true,
+    host: "smtp.zoho.com",
+    port: 587,
+    secure: false,
     auth: {
         user: process.env.USERNAME,
         pass: process.env.PASSWORD,
