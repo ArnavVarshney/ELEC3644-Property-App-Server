@@ -59,10 +59,10 @@ function updateUser(userId, name, avatarUrl, phone, isActive, oldPassword, newPa
         }
     });
 }
-function resetPassword(email, newPassword) {
+function resetPassword(id, newPassword) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = yield database_1.AppDataSource.manager.findOne(User_1.User, {
-            where: { email: email },
+            where: { id: id },
         });
         if (user) {
             user.password = yield (0, bcrypt_1.hash)(newPassword, 10);
@@ -181,8 +181,8 @@ userRouter.post("/forgot-password", (req, res) => __awaiter(void 0, void 0, void
     }
 }));
 userRouter.post("/reset-password", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, newPassword } = req.body;
-    const user = yield resetPassword(email, newPassword);
+    const { id, newPassword } = req.body;
+    const user = yield resetPassword(id, newPassword);
     if (user)
         res.json(user);
     else
