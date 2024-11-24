@@ -96,6 +96,10 @@ app.use("/properties", propertyRoutes_1.default);
 app.use("/wishlists", wishlistRoutes_1.default);
 app.use("/images", express_1.default.static("images", { maxAge: "1h" }));
 app.use("/upload", imageRoutes_1.default);
+app.use("/abode/reset-password/:userId", (req, res) => {
+    console.log(req.params.userId);
+    res.redirect("abode://reset-password/" + req.params.userId);
+});
 server.listen(port, () => {
     console.log(`Server running at port http://localhost:${port}`);
 });
