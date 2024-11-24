@@ -67,6 +67,11 @@ app.use("/wishlists", wishlistRouter);
 app.use("/images", express.static("images", { maxAge: "1h" }));
 app.use("/upload", imageRouter);
 
+app.use("/abode/reset-password/:userId", (req, res) => {
+  console.log(req.params.userId);
+  res.redirect("abode://reset-password/" + req.params.userId);
+});
+
 server.listen(port, () => {
   console.log(`Server running at port http://localhost:${port}`);
 });

@@ -157,7 +157,7 @@ userRouter.post("/forgot-password", async (req, res) => {
   });
 
   if (user) {
-    const resetLink = `abode://reset-password/${user.id}`;
+    const resetLink = `https://${req.get("host")}/abode/reset-password/${user.id}`;
     const mailOptions = {
       from: "info@home-nas.xyz",
       to: user.email,
