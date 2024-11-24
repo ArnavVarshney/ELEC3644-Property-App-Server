@@ -52,9 +52,9 @@ export async function updateUser(
   }
 }
 
-export async function resetPassword(email: string, newPassword: string) {
+export async function resetPassword(id: string, newPassword: string) {
   const user = await AppDataSource.manager.findOne(User, {
-    where: { email: email },
+    where: { id: id },
   });
   if (user) {
     user.password = await hash(newPassword, 10);
@@ -184,8 +184,8 @@ userRouter.post("/forgot-password", async (req, res) => {
 });
 
 userRouter.post("/reset-password", async (req, res) => {
-  const { email, newPassword } = req.body;
-  const user = await resetPassword(email, newPassword);
+  const { id, newPassword } = req.body;
+  const user = await resetPassword(id, newPassword);
   if (user) res.json(user);
   else res.status(404).send("User not found");
 });
