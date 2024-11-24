@@ -150,9 +150,9 @@ userRouter.patch("/:userId", async (req, res) => {
 });
 
 const transporter = nodemailer.createTransport({
-  service: "smtp.zoho.com",
-  port: 465,
-  secure: true,
+  host: "smtp.zoho.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.USERNAME,
     pass: process.env.PASSWORD,
