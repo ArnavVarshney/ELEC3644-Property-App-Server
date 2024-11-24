@@ -2,6 +2,7 @@ import { AppDataSource } from "../database";
 import express from "express";
 import { User } from "../entity/User";
 import { hash } from "bcrypt";
+import nodemailer from "nodemailer";
 
 const userRouter = express.Router({ strict: true });
 
@@ -45,6 +46,17 @@ export async function updateUser(
       if (await user.comparePassword(oldPassword))
         user.password = await hash(newPassword, 10);
       else return null;
+    await AppDataSource.manager.save(user);
+    return user;
+  }
+}
+
+export async function resetPassword(email: string, newPassword: string) {
+  const user = await AppDataSource.manager.findOne(User, {
+    where: { email: email },
+  });
+  if (user) {
+    user.password = await hash(newPassword, 10);
     await AppDataSource.manager.save(user);
     return user;
   }
@@ -133,6 +145,56 @@ userRouter.patch("/:userId", async (req, res) => {
     oldPassword,
     newPassword,
   );
+  if (user) res.json(user);
+  else res.status(404).send("User not found");
+});
+
+const transporter = nodemailer.createTransport({
+  service: "smtp.zoho.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.USERNAME,
+    pass: process.env.PASSWORD,
+  },
+});
+
+userRouter.post("/forgot-password", async (req, res) => {
+  const email = req.body.email;
+  const user = await AppDataSource.manager.findOne(User, {
+    where: { email: email },
+  });
+
+  if (user) {
+    const resetLink = `abode://reset-password/${user.id}`;
+    const mailOptions = {
+      from: "info@home-nas.xyz",
+      to: user.email,
+      subject: "Password Reset",
+      text: `Please use the following link to reset your password: ${resetLink}`,
+      html: `<p>Please use the following link to reset your password: <a href="${resetLink}">${resetLink}</a></p>`,
+    };
+
+    transporter.sendMail(
+      mailOptions,
+      (error: any, info: { response: string }) => {
+        if (error) {
+          console.error(error);
+          res.status(500).send("Error sending email");
+        } else {
+          console.log("Email sent: " + info.response);
+          res.send("Password reset email sent");
+        }
+      },
+    );
+  } else {
+    res.status(404).send("User not found");
+  }
+});
+
+userRouter.post("/reset-password", async (req, res) => {
+  const { email, newPassword } = req.body;
+  const user = await resetPassword(email, newPassword);
   if (user) res.json(user);
   else res.status(404).send("User not found");
 });
