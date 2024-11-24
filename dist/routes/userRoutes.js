@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createUser = createUser;
 exports.updateUser = updateUser;
+exports.resetPassword = resetPassword;
 exports.getUser = getUser;
 exports.getAgents = getAgents;
 exports.getUsers = getUsers;
@@ -21,6 +22,7 @@ const database_1 = require("../database");
 const express_1 = __importDefault(require("express"));
 const User_1 = require("../entity/User");
 const bcrypt_1 = require("bcrypt");
+const nodemailer_1 = __importDefault(require("nodemailer"));
 const userRouter = express_1.default.Router({ strict: true });
 function createUser(name, email, password, avatarUrl, phone) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -52,6 +54,18 @@ function updateUser(userId, name, avatarUrl, phone, isActive, oldPassword, newPa
                     user.password = yield (0, bcrypt_1.hash)(newPassword, 10);
                 else
                     return null;
+            yield database_1.AppDataSource.manager.save(user);
+            return user;
+        }
+    });
+}
+function resetPassword(email, newPassword) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const user = yield database_1.AppDataSource.manager.findOne(User_1.User, {
+            where: { email: email },
+        });
+        if (user) {
+            user.password = yield (0, bcrypt_1.hash)(newPassword, 10);
             yield database_1.AppDataSource.manager.save(user);
             return user;
         }
@@ -132,6 +146,52 @@ userRouter.patch("/:userId", (req, res) => __awaiter(void 0, void 0, void 0, fun
     const userId = req.params.userId;
     const { name, avatarUrl, isActive, phone, oldPassword, newPassword } = req.body;
     const user = yield updateUser(userId, name, avatarUrl, phone, isActive, oldPassword, newPassword);
+    if (user)
+        res.json(user);
+    else
+        res.status(404).send("User not found");
+}));
+const transporter = nodemailer_1.default.createTransport({
+    service: "smtp.zoho.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.USERNAME,
+        pass: process.env.PASSWORD,
+    },
+});
+userRouter.post("/forgot-password", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const email = req.body.email;
+    const user = yield database_1.AppDataSource.manager.findOne(User_1.User, {
+        where: { email: email },
+    });
+    if (user) {
+        const resetLink = `abode://reset-password/${user.id}`;
+        const mailOptions = {
+            from: "info@home-nas.xyz",
+            to: user.email,
+            subject: "Password Reset",
+            text: `Please use the following link to reset your password: ${resetLink}`,
+            html: `<p>Please use the following link to reset your password: <a href="${resetLink}">${resetLink}</a></p>`,
+        };
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error(error);
+                res.status(500).send("Error sending email");
+            }
+            else {
+                console.log("Email sent: " + info.response);
+                res.send("Password reset email sent");
+            }
+        });
+    }
+    else {
+        res.status(404).send("User not found");
+    }
+}));
+userRouter.post("/reset-password", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, newPassword } = req.body;
+    const user = yield resetPassword(email, newPassword);
     if (user)
         res.json(user);
     else
