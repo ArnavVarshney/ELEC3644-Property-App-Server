@@ -3,6 +3,7 @@ import express from "express";
 import { User } from "../entity/User";
 import { hash } from "bcrypt";
 import nodemailer from "nodemailer";
+import { transporter } from "../index";
 
 const userRouter = express.Router({ strict: true });
 
@@ -147,16 +148,6 @@ userRouter.patch("/:userId", async (req, res) => {
   );
   if (user) res.json(user);
   else res.status(404).send("User not found");
-});
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.zoho.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.USERNAME,
-    pass: process.env.PASSWORD,
-  },
 });
 
 userRouter.post("/forgot-password", async (req, res) => {

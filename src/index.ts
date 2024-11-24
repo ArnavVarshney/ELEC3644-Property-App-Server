@@ -12,6 +12,7 @@ import reviewRouter from "./routes/reviewRoutes";
 import propertyRouter from "./routes/propertyRoutes";
 import wishlistRouter from "./routes/wishlistRoutes";
 import imageRouter from "./routes/imageRoutes";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
@@ -46,6 +47,16 @@ app.get("/", async (req, res) => {
   } catch (error) {
     res.status(500).send("Error fetching latest commit");
   }
+});
+
+export const transporter = nodemailer.createTransport({
+  host: "smtp.zoho.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.USERNAME,
+    pass: process.env.PASSWORD,
+  },
 });
 
 app.use("/users", userRouter);
