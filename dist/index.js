@@ -35,6 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.transporter = void 0;
 const express_1 = __importDefault(require("express"));
 const http = __importStar(require("http"));
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -48,6 +49,7 @@ const reviewRoutes_1 = __importDefault(require("./routes/reviewRoutes"));
 const propertyRoutes_1 = __importDefault(require("./routes/propertyRoutes"));
 const wishlistRoutes_1 = __importDefault(require("./routes/wishlistRoutes"));
 const imageRoutes_1 = __importDefault(require("./routes/imageRoutes"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -78,6 +80,15 @@ app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).send("Error fetching latest commit");
     }
 }));
+exports.transporter = nodemailer_1.default.createTransport({
+    host: "smtp.zoho.com",
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.USERNAME,
+        pass: process.env.PASSWORD,
+    },
+});
 app.use("/users", userRoutes_1.default);
 app.use("/messages", messageRoutes_1.default);
 app.use("/reviews", reviewRoutes_1.default);

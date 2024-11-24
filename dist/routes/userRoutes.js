@@ -22,7 +22,7 @@ const database_1 = require("../database");
 const express_1 = __importDefault(require("express"));
 const User_1 = require("../entity/User");
 const bcrypt_1 = require("bcrypt");
-const nodemailer_1 = __importDefault(require("nodemailer"));
+const index_1 = require("../index");
 const userRouter = express_1.default.Router({ strict: true });
 function createUser(name, email, password, avatarUrl, phone) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -151,15 +151,6 @@ userRouter.patch("/:userId", (req, res) => __awaiter(void 0, void 0, void 0, fun
     else
         res.status(404).send("User not found");
 }));
-const transporter = nodemailer_1.default.createTransport({
-    host: "smtp.zoho.com",
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.USERNAME,
-        pass: process.env.PASSWORD,
-    },
-});
 userRouter.post("/forgot-password", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email;
     const user = yield database_1.AppDataSource.manager.findOne(User_1.User, {
@@ -174,7 +165,7 @@ userRouter.post("/forgot-password", (req, res) => __awaiter(void 0, void 0, void
             text: `Please use the following link to reset your password: ${resetLink}`,
             html: `<p>Please use the following link to reset your password: <a href="${resetLink}">${resetLink}</a></p>`,
         };
-        transporter.sendMail(mailOptions, (error, info) => {
+        index_1.transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error(error);
                 res.status(500).send("Error sending email");
