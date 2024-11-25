@@ -23,6 +23,7 @@ const express_1 = __importDefault(require("express"));
 const User_1 = require("../entity/User");
 const bcrypt_1 = require("bcrypt");
 const index_1 = require("../index");
+const reviewRoutes_1 = require("./reviewRoutes");
 const userRouter = express_1.default.Router({ strict: true });
 function createUser(name, email, password, avatarUrl, phone) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -78,9 +79,10 @@ function getUser(userId) {
 }
 function getAgents() {
     return __awaiter(this, void 0, void 0, function* () {
-        return database_1.AppDataSource.getRepository(User_1.User)
+        var agents = yield database_1.AppDataSource.getRepository(User_1.User)
             .createQueryBuilder("user")
             .leftJoinAndSelect("user.propertyListings", "property")
+            .leftJoinAndSelect("user.reviews", "review")
             .where("user.email LIKE :email", { email: "%.agents" })
             .select([
             "user.id",
@@ -93,6 +95,11 @@ function getAgents() {
             "property.name",
         ])
             .getMany();
+        for (let i = 0; i < agents.length; i++) {
+            const reviews = yield (0, reviewRoutes_1.getReviews)(agents[i].id);
+            agents[i].reviews = reviews;
+        }
+        return agents;
     });
 }
 function getUsers() {
