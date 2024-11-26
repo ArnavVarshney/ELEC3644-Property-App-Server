@@ -73,7 +73,7 @@ export async function getAgents() {
     .createQueryBuilder("user")
     .leftJoinAndSelect("user.propertyListings", "property")
     .leftJoinAndSelect("user.reviews", "review")
-    .where("user.email LIKE :email", { email: "%.agents" })
+    .where("user.email LIKE :email", { email: "%agent%" })
     .select([
       "user.id",
       "user.name",
@@ -88,10 +88,10 @@ export async function getAgents() {
 
   for (let i = 0; i < agents.length; i++) {
     const reviews = await getReviews(agents[i].id);
-    agents[i].reviews = reviews
+    agents[i].reviews = reviews;
   }
 
-  return agents
+  return agents;
 }
 
 export async function getUsers() {
