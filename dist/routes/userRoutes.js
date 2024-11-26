@@ -83,7 +83,7 @@ function getAgents() {
             .createQueryBuilder("user")
             .leftJoinAndSelect("user.propertyListings", "property")
             .leftJoinAndSelect("user.reviews", "review")
-            .where("user.email LIKE :email", { email: "%.agents" })
+            .where("user.email LIKE :email", { email: "%agent%" })
             .select([
             "user.id",
             "user.name",
