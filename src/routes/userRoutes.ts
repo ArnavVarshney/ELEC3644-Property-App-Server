@@ -4,6 +4,7 @@ import { User } from "../entity/User";
 import { hash } from "bcrypt";
 import nodemailer from "nodemailer";
 import { transporter } from "../index";
+import { getReviews } from "./reviewRoutes";
 
 const userRouter = express.Router({ strict: true });
 
@@ -68,9 +69,10 @@ export async function getUser(userId: string) {
 }
 
 export async function getAgents() {
-  return AppDataSource.getRepository(User)
+  var agents = await AppDataSource.getRepository(User)
     .createQueryBuilder("user")
     .leftJoinAndSelect("user.propertyListings", "property")
+    .leftJoinAndSelect("user.reviews", "review")
     .where("user.email LIKE :email", { email: "%.agents" })
     .select([
       "user.id",
@@ -83,6 +85,13 @@ export async function getAgents() {
       "property.name",
     ])
     .getMany();
+
+  for (let i = 0; i < agents.length; i++) {
+    const reviews = await getReviews(agents[i].id);
+    agents[i].reviews = reviews
+  }
+
+  return agents
 }
 
 export async function getUsers() {
