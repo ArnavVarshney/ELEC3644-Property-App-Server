@@ -179,7 +179,7 @@ userRouter.post("/forgot-password", (req, res) => __awaiter(void 0, void 0, void
             }
             else {
                 console.log("Email sent: " + info.response);
-                res.send("Password reset email sent");
+                res.json(user);
             }
         });
     }
