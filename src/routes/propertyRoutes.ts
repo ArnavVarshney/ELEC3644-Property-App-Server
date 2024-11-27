@@ -135,36 +135,54 @@ propertyRouter.post("/query", async (req, res) => {
       queryBuilder.andWhere("property.isActive = :isActive", { isActive: query.isActive });
     }
 
-    if (query.saleableArea) {
-      const { min, max } = query.saleableArea;
-      if (min !== undefined && max !== undefined) {
-        queryBuilder.andWhere("property.saleableArea BETWEEN :minArea AND :maxArea", { minArea: min, maxArea: max });
-      } else if (min !== undefined) {
-        queryBuilder.andWhere("property.saleableArea >= :minArea", { minArea: min });
-      } else if (max !== undefined) {
-        queryBuilder.andWhere("property.saleableArea <= :maxArea", { maxArea: max });
+    if (query.minSaleableArea !== undefined || query.maxSaleableArea !== undefined) {
+      if (query.minSaleableArea !== undefined && query.maxSaleableArea !== undefined) {
+        queryBuilder.andWhere("property.saleableArea BETWEEN :minArea AND :maxArea", {
+          minArea: query.minSaleableArea,
+          maxArea: query.maxSaleableArea
+        });
+      } else if (query.minSaleableArea !== undefined) {
+        queryBuilder.andWhere("property.saleableArea >= :minArea", {
+          minArea: query.minSaleableArea
+        });
+      } else if (query.maxSaleableArea !== undefined) {
+        queryBuilder.andWhere("property.saleableArea <= :maxArea", {
+          maxArea: query.maxSaleableArea
+        });
       }
     }
 
-    if (query.netPrice) {
-      const { min, max } = query.netPrice;
-      if (min !== undefined && max !== undefined) {
-        queryBuilder.andWhere("property.netPrice BETWEEN :minPrice AND :maxPrice", { minPrice: min, maxPrice: max });
-      } else if (min !== undefined) {
-        queryBuilder.andWhere("property.netPrice >= :minPrice", { minPrice: min });
-      } else if (max !== undefined) {
-        queryBuilder.andWhere("property.netPrice <= :maxPrice", { maxPrice: max });
+    if (query.minNetPrice !== undefined || query.maxNetPrice !== undefined) {
+      if (query.minNetPrice !== undefined && query.maxNetPrice !== undefined) {
+        queryBuilder.andWhere("property.netPrice BETWEEN :minPrice AND :maxPrice", {
+          minPrice: query.minNetPrice,
+          maxPrice: query.maxNetPrice
+        });
+      } else if (query.minNetPrice !== undefined) {
+        queryBuilder.andWhere("property.netPrice >= :minPrice", {
+          minPrice: query.minNetPrice
+        });
+      } else if (query.maxNetPrice !== undefined) {
+        queryBuilder.andWhere("property.netPrice <= :maxPrice", {
+          maxPrice: query.maxNetPrice
+        });
       }
     }
 
-    if (query.buildingAge) {
-      const { min, max } = query.buildingAge;
-      if (min !== undefined && max !== undefined) {
-        queryBuilder.andWhere("property.buildingAge BETWEEN :minAge AND :maxAge", { minAge: min, maxAge: max });
-      } else if (min !== undefined) {
-        queryBuilder.andWhere("property.buildingAge >= :minAge", { minAge: min });
-      } else if (max !== undefined) {
-        queryBuilder.andWhere("property.buildingAge <= :maxAge", { maxAge: max });
+    if (query.minBuildingAge !== undefined || query.maxBuildingAge !== undefined) {
+      if (query.minBuildingAge !== undefined && query.maxBuildingAge !== undefined) {
+        queryBuilder.andWhere("property.buildingAge BETWEEN :minAge AND :maxAge", {
+          minAge: query.minBuildingAge,
+          maxAge: query.maxBuildingAge
+        });
+      } else if (query.minBuildingAge !== undefined) {
+        queryBuilder.andWhere("property.buildingAge >= :minAge", {
+          minAge: query.minBuildingAge
+        });
+      } else if (query.maxBuildingAge !== undefined) {
+        queryBuilder.andWhere("property.buildingAge <= :maxAge", {
+          maxAge: query.maxBuildingAge
+        });
       }
     }
 
