@@ -71,6 +71,9 @@ export class Property {
   @Column("simple-json", { nullable: true })
   imageUrls: string[];
 
+  @Column("simple-json", { nullable: true, default: "[]" })
+  vrImageUrls: { name: string; url: string }[];
+
   @Column("simple-json", { nullable: true })
   transactionHistory: { date: string; price: number }[];
 
@@ -83,7 +86,7 @@ export class Property {
   @Column({ nullable: true })
   propertyType: string;
 
-  @Column({ nullable: true, type: 'simple-json' })
+  @Column({ nullable: true, type: "simple-json" })
   amenities: string[];
 
   @Column({ nullable: true })

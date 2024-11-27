@@ -93,6 +93,10 @@ __decorate([
     __metadata("design:type", Array)
 ], Property.prototype, "imageUrls", void 0);
 __decorate([
+    (0, typeorm_1.Column)("simple-json", { nullable: true, default: "[]" }),
+    __metadata("design:type", Array)
+], Property.prototype, "vrImageUrls", void 0);
+__decorate([
     (0, typeorm_1.Column)("simple-json", { nullable: true }),
     __metadata("design:type", Array)
 ], Property.prototype, "transactionHistory", void 0);
@@ -109,7 +113,7 @@ __decorate([
     __metadata("design:type", String)
 ], Property.prototype, "propertyType", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true, type: 'simple-json' }),
+    (0, typeorm_1.Column)({ nullable: true, type: "simple-json" }),
     __metadata("design:type", Array)
 ], Property.prototype, "amenities", void 0);
 __decorate([
