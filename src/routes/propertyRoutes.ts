@@ -26,6 +26,7 @@ interface PropertyType {
   contractType: string;
   amenities: string[];
   propertyType: string;
+  isActive: boolean;
 }
 
 
@@ -81,7 +82,7 @@ propertyRouter.post("/", async (req, res) => {
   ];
 
   for (const field of requiredFields) {
-    if (!req.body[field]) {
+    if (req.body[field] !== undefined) {
       res.status(400).send(`${field} is required`);
       return;
     }
@@ -122,6 +123,10 @@ propertyRouter.post("/query", async (req, res) => {
     }
     if (query.contractType) {
       queryBuilder.andWhere("property.contractType LIKE :contractType", { contractType: `%${query.contractType}%` });
+    }
+
+    if (query.isActive) {
+      queryBuilder.andWhere("property.isActive = :isActive", { isActive: query.isActive });
     }
 
     if (query.saleableArea) {

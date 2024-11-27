@@ -105,4 +105,7 @@ export class Property {
 
   @CreateDateColumn()
   timestamp: Date = new Date();
+
+  @Column({ default: true })
+  isActive: boolean;
 }
