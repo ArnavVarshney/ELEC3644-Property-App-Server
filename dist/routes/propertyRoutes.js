@@ -95,10 +95,14 @@ propertyRouter.post("/query", (req, res) => __awaiter(void 0, void 0, void 0, fu
             queryBuilder.andWhere("property.area LIKE :area", { area: `%${query.area}%` });
         }
         if (query.district) {
-            queryBuilder.andWhere("property.district LIKE :district", { district: `%${query.district}%` });
+            if (query.district !== "any") {
+                queryBuilder.andWhere("property.district LIKE :district", { district: `%${query.district}%` });
+            }
         }
         if (query.subDistrict) {
-            queryBuilder.andWhere("property.subDistrict LIKE :subDistrict", { subDistrict: `%${query.subDistrict}%` });
+            if (query.subDistrict !== "any") {
+                queryBuilder.andWhere("property.subDistrict LIKE :subDistrict", { subDistrict: `%${query.subDistrict}%` });
+            }
         }
         if (query.estate) {
             queryBuilder.andWhere("property.estate LIKE :estate", { estate: `%${query.estate}%` });
