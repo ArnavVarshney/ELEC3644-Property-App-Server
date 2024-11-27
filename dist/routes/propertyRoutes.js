@@ -73,7 +73,7 @@ propertyRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
         "contractType"
     ];
     for (const field of requiredFields) {
-        if (!req.body[field]) {
+        if (req.body[field] !== undefined) {
             res.status(400).send(`${field} is required`);
             return;
         }
@@ -110,6 +110,9 @@ propertyRouter.post("/query", (req, res) => __awaiter(void 0, void 0, void 0, fu
         }
         if (query.contractType) {
             queryBuilder.andWhere("property.contractType LIKE :contractType", { contractType: `%${query.contractType}%` });
+        }
+        if (query.isActive) {
+            queryBuilder.andWhere("property.isActive = :isActive", { isActive: query.isActive });
         }
         if (query.saleableArea) {
             const { min, max } = query.saleableArea;
