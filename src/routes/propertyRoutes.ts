@@ -105,7 +105,9 @@ propertyRouter.post("/query", async (req, res) => {
       queryBuilder.andWhere("property.address LIKE :address", { address: `%${query.address}%` });
     }
     if (query.area) {
-      queryBuilder.andWhere("property.area LIKE :area", { area: `%${query.area}%` });
+      if (query.area !== "any") {
+        queryBuilder.andWhere("property.area LIKE :area", { area: `%${query.area}%` });
+      }
     }
     if (query.district) {
       if (query.district !== "any") {
