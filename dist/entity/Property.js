@@ -131,6 +131,10 @@ __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Property.prototype, "timestamp", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: true }),
+    __metadata("design:type", Boolean)
+], Property.prototype, "isActive", void 0);
 exports.Property = Property = __decorate([
     (0, typeorm_1.Entity)()
 ], Property);
