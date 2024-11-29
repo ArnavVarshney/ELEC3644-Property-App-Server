@@ -79,7 +79,7 @@ propertyRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
         "buildingAge",
         "buildingDirection",
         "estate",
-        "agentId",
+        "agent",
         "propertyType",
         "amenities",
         "contractType",
@@ -90,6 +90,16 @@ propertyRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
             return;
         }
     }
+    if (req.body.agent !== undefined) {
+        req.body.agentId = req.body.agent.toLowerCase();
+    }
+    req.body.transactionHistory = [];
+    req.body.id = undefined;
+    req.body.amenities = JSON.parse(req.body.amenities);
+    req.body.schoolNet = JSON.parse(req.body.schoolNet);
+    req.body.facilities = JSON.parse(req.body.facilities);
+    req.body.imageUrls = JSON.parse(req.body.imageUrls);
+    req.body.vrImageUrls = JSON.parse(req.body.vrImageUrls);
     const property = yield createProperty(req.body);
     res.json(property);
 }));
@@ -152,21 +162,23 @@ propertyRouter.post("/query", (req, res) => __awaiter(void 0, void 0, void 0, fu
                 isActive: query.isActive,
             });
         }
-        if (query.minSaleableArea !== undefined || query.maxSaleableArea !== undefined) {
-            if (query.minSaleableArea !== undefined && query.maxSaleableArea !== undefined) {
+        if (query.minSaleableArea !== undefined ||
+            query.maxSaleableArea !== undefined) {
+            if (query.minSaleableArea !== undefined &&
+                query.maxSaleableArea !== undefined) {
                 queryBuilder.andWhere("property.saleableArea BETWEEN :minArea AND :maxArea", {
                     minArea: query.minSaleableArea,
-                    maxArea: query.maxSaleableArea
+                    maxArea: query.maxSaleableArea,
                 });
             }
             else if (query.minSaleableArea !== undefined) {
                 queryBuilder.andWhere("property.saleableArea >= :minArea", {
-                    minArea: query.minSaleableArea
+                    minArea: query.minSaleableArea,
                 });
             }
             else if (query.maxSaleableArea !== undefined) {
                 queryBuilder.andWhere("property.saleableArea <= :maxArea", {
-                    maxArea: query.maxSaleableArea
+                    maxArea: query.maxSaleableArea,
                 });
             }
         }
@@ -174,35 +186,37 @@ propertyRouter.post("/query", (req, res) => __awaiter(void 0, void 0, void 0, fu
             if (query.minNetPrice !== undefined && query.maxNetPrice !== undefined) {
                 queryBuilder.andWhere("property.netPrice BETWEEN :minPrice AND :maxPrice", {
                     minPrice: query.minNetPrice,
-                    maxPrice: query.maxNetPrice
+                    maxPrice: query.maxNetPrice,
                 });
             }
             else if (query.minNetPrice !== undefined) {
                 queryBuilder.andWhere("property.netPrice >= :minPrice", {
-                    minPrice: query.minNetPrice
+                    minPrice: query.minNetPrice,
                 });
             }
             else if (query.maxNetPrice !== undefined) {
                 queryBuilder.andWhere("property.netPrice <= :maxPrice", {
-                    maxPrice: query.maxNetPrice
+                    maxPrice: query.maxNetPrice,
                 });
             }
         }
-        if (query.minBuildingAge !== undefined || query.maxBuildingAge !== undefined) {
-            if (query.minBuildingAge !== undefined && query.maxBuildingAge !== undefined) {
+        if (query.minBuildingAge !== undefined ||
+            query.maxBuildingAge !== undefined) {
+            if (query.minBuildingAge !== undefined &&
+                query.maxBuildingAge !== undefined) {
                 queryBuilder.andWhere("property.buildingAge BETWEEN :minAge AND :maxAge", {
                     minAge: query.minBuildingAge,
-                    maxAge: query.maxBuildingAge
+                    maxAge: query.maxBuildingAge,
                 });
             }
             else if (query.minBuildingAge !== undefined) {
                 queryBuilder.andWhere("property.buildingAge >= :minAge", {
-                    minAge: query.minBuildingAge
+                    minAge: query.minBuildingAge,
                 });
             }
             else if (query.maxBuildingAge !== undefined) {
                 queryBuilder.andWhere("property.buildingAge <= :maxAge", {
-                    maxAge: query.maxBuildingAge
+                    maxAge: query.maxBuildingAge,
                 });
             }
         }
