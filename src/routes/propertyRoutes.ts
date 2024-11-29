@@ -280,4 +280,17 @@ propertyRouter.patch("/:propertyId", async (req, res) => {
   else res.status(404).send("Property not found");
 });
 
+propertyRouter.delete("/", async (req, res) => {
+  const property = await AppDataSource.manager.findOne(Property, {
+    where: { id: req.body.id },
+  });
+
+  if (property) {
+    await AppDataSource.manager.remove(property);
+    res.send("Property deleted");
+  } else {
+    res.status(404).send("Property not found");
+  }
+});
+
 export default propertyRouter;
