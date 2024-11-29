@@ -101,7 +101,8 @@ propertyRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
     req.body.imageUrls = JSON.parse(req.body.imageUrls);
     req.body.vrImageUrls = JSON.parse(req.body.vrImageUrls);
     const property = yield createProperty(req.body);
-    res.json(property);
+    const updatedProperty = yield getProperty(property.id);
+    res.json(updatedProperty);
 }));
 propertyRouter.post("/query", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -240,21 +241,11 @@ propertyRouter.post("/query", (req, res) => __awaiter(void 0, void 0, void 0, fu
 }));
 propertyRouter.patch("/:propertyId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const property = yield updateProperty(req.params.propertyId, req.body);
-    if (property)
-        res.json(property);
+    if (property) {
+        const updatedProperty = yield getProperty(property.id);
+        res.json(updatedProperty);
+    }
     else
         res.status(404).send("Property not found");
-}));
-propertyRouter.delete("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const property = yield database_1.AppDataSource.manager.findOne(Property_1.Property, {
-        where: { id: req.body.id },
-    });
-    if (property) {
-        yield database_1.AppDataSource.manager.remove(property);
-        res.send("Property deleted");
-    }
-    else {
-        res.status(404).send("Property not found");
-    }
 }));
 exports.default = propertyRouter;
