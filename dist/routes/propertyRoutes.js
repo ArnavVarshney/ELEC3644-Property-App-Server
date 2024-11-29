@@ -245,4 +245,16 @@ propertyRouter.patch("/:propertyId", (req, res) => __awaiter(void 0, void 0, voi
     else
         res.status(404).send("Property not found");
 }));
+propertyRouter.delete("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const property = yield database_1.AppDataSource.manager.findOne(Property_1.Property, {
+        where: { id: req.body.id },
+    });
+    if (property) {
+        yield database_1.AppDataSource.manager.remove(property);
+        res.send("Property deleted");
+    }
+    else {
+        res.status(404).send("Property not found");
+    }
+}));
 exports.default = propertyRouter;
