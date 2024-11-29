@@ -115,7 +115,8 @@ propertyRouter.post("/", async (req, res) => {
   req.body.vrImageUrls = JSON.parse(req.body.vrImageUrls);
 
   const property = await createProperty(req.body);
-  res.json(property);
+  const updatedProperty = await getProperty(property.id);
+  res.json(updatedProperty);
 });
 
 propertyRouter.post("/query", async (req, res) => {
@@ -276,21 +277,10 @@ propertyRouter.post("/query", async (req, res) => {
 
 propertyRouter.patch("/:propertyId", async (req, res) => {
   const property = await updateProperty(req.params.propertyId, req.body);
-  if (property) res.json(property);
-  else res.status(404).send("Property not found");
-});
-
-propertyRouter.delete("/", async (req, res) => {
-  const property = await AppDataSource.manager.findOne(Property, {
-    where: { id: req.body.id },
-  });
-
   if (property) {
-    await AppDataSource.manager.remove(property);
-    res.send("Property deleted");
-  } else {
-    res.status(404).send("Property not found");
-  }
+    const updatedProperty = await getProperty(property.id);
+    res.json(updatedProperty);
+  } else res.status(404).send("Property not found");
 });
 
 export default propertyRouter;
